@@ -11,7 +11,7 @@ DURATION_CHOICES = (
 class Service(models.Model):
     name = models.CharField('Название', max_length=NAME_MAX_LENGTH)
     description = models.TextField('Описание')
-    duration = models.IntegerField(
+    duration = models.PositiveSmallIntegerField(
         'Продолжительность (в мин.)', choices=DURATION_CHOICES
     )
     is_active = models.BooleanField('Действительно', default=True)
@@ -27,27 +27,28 @@ class Service(models.Model):
         verbose_name_plural = 'Услуги'
 
 
-class AdditionalService(models.Model):
-    option_name = models.CharField(
+class Option(models.Model):
+    name = models.CharField(
         'Название', max_length=NAME_MAX_LENGTH
     )
     price = models.IntegerField('Цена')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    is_active = models.BooleanField('Действительно', default=True)
-
-    class Meta:
-        verbose_name = 'доп. услуга'
-        verbose_name_plural = 'Доп услуги'
-
-
-class ServiceOptions(models.Model):
-    option_name = models.CharField(
-        'Название', max_length=NAME_MAX_LENGTH
-    )
-    price = models.IntegerField('Цена')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE,
+                                related_name='options')
     is_active = models.BooleanField('Действительно', default=True)
 
     class Meta:
         verbose_name = 'опция услуги'
         verbose_name_plural = 'Опции услуги'
+
+
+# class AdditionalService(models.Model):
+#     option_name = models.CharField(
+#         'Название', max_length=NAME_MAX_LENGTH
+#     )
+#     price = models.IntegerField('Цена')
+#     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+#     is_active = models.BooleanField('Действительно', default=True)
+
+#     class Meta:
+#         verbose_name = 'доп. услуга'
+#         verbose_name_plural = 'Доп услуги'

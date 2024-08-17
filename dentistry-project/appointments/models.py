@@ -6,7 +6,7 @@ from services.models import Service
 User = get_user_model()
 
 
-class Entrie(models.Model):
+class Appointment(models.Model):
     patient = models.ForeignKey(
         User,
         verbose_name='Пациент',
@@ -20,11 +20,8 @@ class Entrie(models.Model):
         related_name='entrie',
         on_delete=models.CASCADE
     )
-    # date = models.DateTimeField()
-    time_slots = models.IntegerField(null=True)
     service = models.ManyToManyField(
         Service,
-        # through='EntrieService'
     )
 
     class Meta:
@@ -32,16 +29,8 @@ class Entrie(models.Model):
         verbose_name_plural = 'Приемы'
 
 
-# class EntrieService(models.Model):
-#     entrie = models.ForeignKey(
-#         Entrie,
-#         verbose_name='Запись',
-#         related_name='services',
-#         on_delete=models.CASCADE,
-#     )
-#     service = models.ForeignKey(
-#         Service,
-#         verbose_name='Услуга',
-#         related_name='entries',
-#         on_delete=models.CASCADE,
-#     )
+class TimeSlot(models.Model):
+    start_time = models.DateTimeField('Время начала слота')
+    entrie = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, verbose_name='time_slots'
+    )
