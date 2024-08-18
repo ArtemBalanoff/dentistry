@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from doctors.models import Doctor
-from services.models import Service
+from services.models import Option
 
 User = get_user_model()
 
@@ -10,27 +10,37 @@ class Appointment(models.Model):
     patient = models.ForeignKey(
         User,
         verbose_name='Пациент',
-        related_name='entrie',
+        related_name='appointments',
         on_delete=models.CASCADE
     )
-    price = models.IntegerField()
     doctor = models.ForeignKey(
         Doctor,
         verbose_name='Доктор',
-        related_name='entrie',
+        related_name='appointments',
         on_delete=models.CASCADE
     )
-    service = models.ManyToManyField(
-        Service,
-    )
+    options = models.ManyToManyField(Option)
 
     class Meta:
         verbose_name = 'прием'
         verbose_name_plural = 'Приемы'
 
+    @property
+    def price(self):
+        return sum(self.options.values('price'))
+
 
 class TimeSlot(models.Model):
-    start_time = models.DateTimeField('Время начала слота')
-    entrie = models.ForeignKey(
+    date = models.DateField('День')
+    start_time = models.TimeField('Время начала слота')
+    appointment = models.ForeignKey(
         Appointment, on_delete=models.CASCADE, verbose_name='time_slots'
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('date', 'start_time'),
+                name='datetime_unique'
+            )
+        ]

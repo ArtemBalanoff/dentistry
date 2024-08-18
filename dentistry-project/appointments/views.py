@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Appointment, TimeSlot
-from .serializers import AppointmentSerializer, TimeSlotSerializer
+from .models import Appointment
+from .serializers import AppointmentSerializer
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
@@ -8,6 +8,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     serializer_class = AppointmentSerializer
 
 
-class TimeSlotViewSet(viewsets.ModelViewSet):
-    queryset = TimeSlot.objects.all()
-    serializer_class = TimeSlotSerializer
+# class TimeSlotViewSet(viewsets.ModelViewSet):
+#     queryset = TimeSlot.objects.all()
+#     serializer_class = TimeSlotSerializer

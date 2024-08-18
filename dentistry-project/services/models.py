@@ -5,6 +5,7 @@ from doctors.models import Specialization
 DURATION_CHOICES = (
     (30, 'Half an hour'),
     (60, 'An hour'),
+    (120, 'Two hours'),
 )
 
 
@@ -14,7 +15,6 @@ class Service(models.Model):
     duration = models.PositiveSmallIntegerField(
         'Продолжительность (в мин.)', choices=DURATION_CHOICES
     )
-    is_active = models.BooleanField('Действительно', default=True)
     specialization = models.ForeignKey(
         Specialization,
         verbose_name='Специализация',
@@ -34,7 +34,6 @@ class Option(models.Model):
     price = models.IntegerField('Цена')
     service = models.ForeignKey(Service, on_delete=models.CASCADE,
                                 related_name='options')
-    is_active = models.BooleanField('Действительно', default=True)
 
     class Meta:
         verbose_name = 'опция услуги'
