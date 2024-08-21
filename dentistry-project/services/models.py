@@ -3,9 +3,9 @@ from dentistry.constants import NAME_MAX_LENGTH
 from doctors.models import Specialization
 
 DURATION_CHOICES = (
-    (30, 'Half an hour'),
-    (60, 'An hour'),
-    (120, 'Two hours'),
+    (30, '30 минут'),
+    (60, '1 час'),
+    (120, '2 часа'),
 )
 
 
@@ -25,6 +25,10 @@ class Service(models.Model):
     class Meta:
         verbose_name = 'услуга'
         verbose_name_plural = 'Услуги'
+        ordering = ('specialization',)
+
+    def __str__(self):
+        return self.name
 
 
 class Option(models.Model):
@@ -38,6 +42,10 @@ class Option(models.Model):
     class Meta:
         verbose_name = 'опция услуги'
         verbose_name_plural = 'Опции услуги'
+        ordering = ('service', 'price')
+
+    def __str__(self):
+        return self.name
 
 
 # class AdditionalService(models.Model):

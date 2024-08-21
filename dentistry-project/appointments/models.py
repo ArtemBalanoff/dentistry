@@ -34,8 +34,10 @@ class TimeSlot(models.Model):
     date = models.DateField('День')
     start_time = models.TimeField('Время начала слота')
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, verbose_name='time_slots'
+        Appointment, on_delete=models.CASCADE, verbose_name='timeslots'
     )
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
+                               related_name='timeslots')
 
     class Meta:
         constraints = [
