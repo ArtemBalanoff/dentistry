@@ -1,19 +1,25 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from dentistry.constants import SLOT_DURATION
 from schedule.models import ExceptionCase
 from .exceptions import BusyDayException, DayHaveNecessaryTimeSlotsCount
+from users.models import DoctorProfile
+from services.models import Service
+from datetime import date
 
 
-def time_add_timedelta(time, timedelta):
+def time_add_timedelta(time: time, timedelta: timedelta):
     return (datetime.combine(datetime.today(), time) + timedelta).time()
 
 
-def necessary_timeslots_count_from_services(services):
+def necessary_timeslots_count_from_services(services: Service):
     services_durations = [service.duration for service in services]
     return sum(services_durations) // SLOT_DURATION
 
 
-def check_doctor_working_day(current_date, doctor, services):
+def check_doctor_working_day(
+        current_date: date,
+        doctor: DoctorProfile,
+        services: Service):
     week_day = current_date.weekday()
     doctor_day = doctor.schedule.filter(week_day=week_day).first()
     if not doctor_day:

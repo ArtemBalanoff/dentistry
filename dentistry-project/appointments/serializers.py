@@ -1,10 +1,10 @@
-from datetime import date, datetime
+from datetime import date
 from dentistry.constants import SLOT_DURATION
 from datetime import timedelta
 from rest_framework import serializers
 from .models import Appointment, TimeSlot
 from schedule.models import DoctorSchedule, ExceptionCase
-from doctors.models import Doctor
+from users.models import DoctorProfile
 from services.models import Service
 from .exceptions import BusyDayException
 from .validators import date_validator, services_validator
@@ -20,7 +20,7 @@ class TimeSlotSerializer(serializers.Serializer):
 
 class AvaliableTimeSlotsSerializer(serializers.Serializer):
     doctor = serializers.SlugRelatedField(
-        queryset=Doctor.objects.all(), slug_field='id')
+        queryset=DoctorProfile.objects.all(), slug_field='id')
     services = serializers.SlugRelatedField(
         queryset=Service.objects.all(), slug_field='id', many=True)
     date = serializers.DateField()
@@ -33,7 +33,9 @@ class AvaliableTimeSlotsSerializer(serializers.Serializer):
 
     def validate(self, data):
         try:
-            check_doctor_working_day(data.get('date'), data.get('doctor'))
+            check_doctor_working_day(data.get('date'),
+                                     data.get('doctor'),
+                                     data.get('services'))
         except BusyDayException:
             raise serializers.ValidationError('В этот день врач не работает')
         return data
@@ -63,7 +65,7 @@ class AvaliableTimeSlotsSerializer(serializers.Serializer):
 
 class AvaliableDaysSerializer(serializers.Serializer):
     doctors = serializers.SlugRelatedField(
-        queryset=Doctor.objects.all(), slug_field='id', many=True)
+        queryset=DoctorProfile.objects.all(), slug_field='id', many=True)
     services = serializers.SlugRelatedField(
         queryset=Service.objects.all(), slug_field='id', many=True)
     period = serializers.IntegerField()

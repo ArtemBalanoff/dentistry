@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from doctors.models import Doctor
+from users.models import DoctorProfile
 from services.models import Option
 
 User = get_user_model()
@@ -14,7 +14,7 @@ class Appointment(models.Model):
         on_delete=models.CASCADE
     )
     doctor = models.ForeignKey(
-        Doctor,
+        DoctorProfile,
         verbose_name='Доктор',
         related_name='appointments',
         on_delete=models.CASCADE
@@ -36,7 +36,7 @@ class TimeSlot(models.Model):
     appointment = models.ForeignKey(
         Appointment, on_delete=models.CASCADE, verbose_name='timeslots'
     )
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
+    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE,
                                related_name='timeslots')
 
     class Meta:

@@ -1,6 +1,6 @@
 from datetime import time
 from django.db import models
-from doctors.models import Doctor
+from users.models import DoctorProfile
 from dentistry.constants import REASON_MAX_LENGTH
 from django.core.exceptions import ValidationError
 
@@ -47,7 +47,7 @@ class BaseSchedule(models.Model):
 
 
 class DoctorSchedule(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
+    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE,
                                related_name='schedule', verbose_name='Доктор')
     week_day = models.PositiveBigIntegerField(
         'День недели', choices=WEEKDAY_CHOICES)
@@ -94,7 +94,7 @@ class DoctorSchedule(models.Model):
 
 class ExceptionCase(models.Model):
     doctor = models.ForeignKey(
-        Doctor, related_name='exception_cases', verbose_name='Доктор',
+        DoctorProfile, related_name='exception_cases', verbose_name='Доктор',
         on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField('Дата')
     # start_time = models.TimeField(

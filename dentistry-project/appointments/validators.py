@@ -1,6 +1,7 @@
 from datetime import date
 from schedule.models import BaseSchedule, ExceptionCase
 from rest_framework import serializers
+from services.models import Service
 
 
 def date_validator(date: date):
@@ -22,7 +23,7 @@ def date_validator(date: date):
     return date
 
 
-def services_validator(services):
+def services_validator(services: Service):
     if not services:
         raise serializers.ValidationError(
             'Услуга - обязательное поле'

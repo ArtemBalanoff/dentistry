@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from .models import Appointment, TimeSlot
 from .serializers import (
-    AppointmentSerializer, AvaliableTimeSlotsSerializer, TimeSlotSerializer, AvaliableDaysSerializer
+    AppointmentSerializer, AvaliableTimeSlotsSerializer,
+    TimeSlotSerializer, AvaliableDaysSerializer
 )
 from .mixins import ListViewSet
 

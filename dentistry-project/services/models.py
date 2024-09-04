@@ -1,6 +1,6 @@
 from django.db import models
 from dentistry.constants import NAME_MAX_LENGTH
-from doctors.models import Specialization
+from users.models import Specialization
 
 DURATION_CHOICES = (
     (30, '30 минут'),
