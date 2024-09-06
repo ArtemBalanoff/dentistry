@@ -2,12 +2,13 @@ from http import HTTPStatus
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets
-from .models import Appointment, TimeSlot
+from .models import Appointment
 from .serializers import (
-    AppointmentSerializer, AvaliableTimeSlotsSerializer,
-    TimeSlotSerializer, AvaliableDaysSerializer
+    AppointmentSerializer, AvailableTimeSlotsSerializer,
+    AvailableDaysSerializer
 )
-from .mixins import ListViewSet
+# from .mixins import ListViewSet
+from rest_framework.request import Request
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
@@ -15,13 +16,13 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     serializer_class = AppointmentSerializer
 
 
-class TimeSlotViewSet(ListViewSet):
-    queryset = TimeSlot.objects.all()
-    serializer_class = TimeSlotSerializer
+# class TimeSlotViewSet(ListViewSet):
+#     queryset = TimeSlot.objects.all()
+#     serializer_class = TimeSlotSerializer
 
 
 @api_view(('GET',))
-def avaliable_days(request, *args, **kwargs):
+def avaliable_days(request: Request, *args, **kwargs):
     services = request.query_params.get('services')
     services = [int(service_id) for service_id in services.split(',')]
     doctors = request.query_params.get('doctors')
@@ -30,7 +31,7 @@ def avaliable_days(request, *args, **kwargs):
     else:
         doctors = []
     period = int(request.query_params.get('period', 7))
-    serializer = AvaliableDaysSerializer(
+    serializer = AvailableDaysSerializer(
         data={'services': services,
               'doctors': doctors,
               'period': period})
@@ -40,12 +41,12 @@ def avaliable_days(request, *args, **kwargs):
 
 
 @api_view(('GET',))
-def avaliable_timeslots(request, *args, **kwargs):
+def avaliable_timeslots(request: Request, *args, **kwargs):
     date = request.query_params.get('date')
     services = request.query_params.get('services')
     services = [int(service_id) for service_id in services.split(',')]
     doctor = int(request.query_params.get('doctor'))
-    serializer = AvaliableTimeSlotsSerializer(
+    serializer = AvailableTimeSlotsSerializer(
         data={'services': services,
               'doctor': doctor,
               'date': date}

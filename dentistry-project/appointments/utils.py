@@ -1,10 +1,11 @@
 from datetime import datetime, time, timedelta
 from dentistry.constants import SLOT_DURATION
-from schedule.models import ExceptionCase
+from schedule.models import DoctorSchedule, ExceptionCase
 from .exceptions import BusyDayException, DayHaveNecessaryTimeSlotsCount
 from users.models import DoctorProfile
 from services.models import Service
-from datetime import date
+import datetime as dt
+from django.db.models import QuerySet
 
 
 def time_add_timedelta(time: time, timedelta: timedelta):
@@ -17,11 +18,12 @@ def necessary_timeslots_count_from_services(services: Service):
 
 
 def check_doctor_working_day(
-        current_date: date,
+        current_date: dt.date,
         doctor: DoctorProfile,
         services: Service):
-    week_day = current_date.weekday()
-    doctor_day = doctor.schedule.filter(week_day=week_day).first()
+    week_day: int = current_date.weekday()
+    doctor_day: DoctorSchedule = doctor.schedule.filter(
+        week_day=week_day).first()
     if not doctor_day:
         raise BusyDayException('В этот день доктор не работает по расписанию')
     current_date_exception_cases = (
@@ -32,14 +34,16 @@ def check_doctor_working_day(
     if current_date_exception_cases.filter(doctor=doctor).exists():
         raise BusyDayException(
             'В этот день доктор не работает из-за обстоятельств')
-    busy_timeslots_start_time = doctor.timeslots.filter(
-        date=current_date).values('start_time')
+    busy_timeslots: QuerySet = doctor.timeslots.filter(
+        date=current_date)
+    busy_timeslots_start_times = busy_timeslots.values_list(
+        'start_time', flat=True)
     timeslots = []
-    start_time = doctor_day.start_time
-    end_time = doctor_day.end_time
+    start_time: dt.time = doctor_day.start_time
+    end_time: dt.time = doctor_day.end_time
     while start_time != end_time:
         timeslot_is_free = False if (
-            start_time in busy_timeslots_start_time) else True
+            start_time in busy_timeslots_start_times) else True
         timeslots.append(timeslot_is_free)
         start_time = time_add_timedelta(
             start_time, timedelta(minutes=SLOT_DURATION))

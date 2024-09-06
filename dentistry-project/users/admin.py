@@ -20,6 +20,13 @@ class PatientProfileInline(admin.StackedInline):
     verbose_name_plural = 'Профиль Пациента'
 
 
+class UserInLine(admin.StackedInline):
+    model = CustomUser
+    extra = 0
+    max_num = 0
+    verbose_name_plural = 'Профиль Пользователя'
+
+
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     inlines = (DoctorProfileInline, PatientProfileInline,)
@@ -30,12 +37,14 @@ class CustomUserAdmin(admin.ModelAdmin):
 @admin.register(DoctorProfile)
 class DoctorAdmin(admin.ModelAdmin):
     # list_display = '__all__'
+    # inlines = (UserInLine,)
     pass
 
 
 @admin.register(PatientProfile)
 class PatientAdmin(admin.ModelAdmin):
     # list_display = '__all__'
+    # inlines = (UserInLine,)
     pass
 
 
