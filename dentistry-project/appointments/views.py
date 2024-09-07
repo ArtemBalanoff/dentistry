@@ -1,3 +1,4 @@
+import datetime as dt
 from http import HTTPStatus
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,14 +24,11 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
 @api_view(('GET',))
 def avaliable_days(request: Request, *args, **kwargs):
-    services = request.query_params.get('services')
-    services = [int(service_id) for service_id in services.split(',')]
-    doctors = request.query_params.get('doctors')
-    if doctors:
-        doctors = [int(doctors_id) for doctors_id in doctors.split(',')]
-    else:
-        doctors = []
-    period = int(request.query_params.get('period', 7))
+    services = request.query_params.get('services', [])
+    doctors = request.query_params.get('doctors', [])
+    period = request.query_params.get('period', 7)
+    services = services and services.split(',')
+    doctors = doctors and doctors.split(',')
     serializer = AvailableDaysSerializer(
         data={'services': services,
               'doctors': doctors,
@@ -42,10 +40,10 @@ def avaliable_days(request: Request, *args, **kwargs):
 
 @api_view(('GET',))
 def avaliable_timeslots(request: Request, *args, **kwargs):
-    date = request.query_params.get('date')
-    services = request.query_params.get('services')
-    services = [int(service_id) for service_id in services.split(',')]
-    doctor = int(request.query_params.get('doctor'))
+    services = request.query_params.get('services', [])
+    services = services and services.split(',')
+    doctor = request.query_params.get('doctor')
+    date = request.query_params.get('date', dt.date.today())
     serializer = AvailableTimeSlotsSerializer(
         data={'services': services,
               'doctor': doctor,

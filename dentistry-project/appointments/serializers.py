@@ -36,15 +36,12 @@ class AvailableTimeSlotsSerializer(serializers.Serializer):
         return services_validator(services)
 
     def validate(self, data):
-        try:
-            check_doctor_working_day(data.get('date'),
-                                     data.get('doctor'),
-                                     data.get('services'))
-        except BusyDayException:
-            raise serializers.ValidationError('В этот день врач не работает')
+        check_doctor_working_day(data.get('date'),
+                                 data.get('doctor'),
+                                 data.get('services'))
         return data
 
-    def to_representation(self, instance: 'AvailableTimeSlotsSerializer'):
+    def to_representation(self, instance: Any):
         data: dict = self.validated_data
         doctor: Opt[DoctorProfile] = data.get('doctor')
         date: Opt[dt.date] = data.get('date')
@@ -52,11 +49,14 @@ class AvailableTimeSlotsSerializer(serializers.Serializer):
             doctor.schedule.get(week_day=date.weekday()))
         start_time: dt.time = current_doctor_schedule.start_time
         end_time: dt.time = current_doctor_schedule.end_time
+        current_time = dt.datetime.now().time()
         timeslots = []
         busy_timeslots: QuerySet = doctor.timeslots.filter(date=date)
         busy_timeslots_values = busy_timeslots.values_list('start_time', flat=True)
         while start_time != end_time:
-            is_free = False if start_time in busy_timeslots_values else True
+            is_free = False if (
+                start_time in busy_timeslots_values
+                or start_time < current_time) else True
             timeslots.append(
                 {'time': start_time, 'is_free': is_free}
             )
@@ -84,22 +84,23 @@ class AvailableDaysSerializer(serializers.Serializer):
             data['doctors'] = services[0].specialization.doctors.all()
         return data
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Any):
         data = self.validated_data
-        period = data.get('period')
-        doctors = data.get('doctors')
-        services = data.get('services')
+        period: Opt[int] = data.get('period')
+        doctors: Opt[list[DoctorProfile]] = data.get('doctors')
+        services: Opt[list[Service]] = data.get('services')
         today = dt.date.today()
         dates = [today + timedelta(days=day_idx) for day_idx in range(period)]
-        days = [{'date': date, 'is_free': False} for date in dates]
+        days = [{'date': date, 'is_free': False, 'doctors': []} for date in dates]
         for doctor in doctors:
             for day_idx in range(len(dates)):
                 try:
                     check_doctor_working_day(dates[day_idx], doctor, services)
-                except BusyDayException:
+                except serializers.ValidationError:
                     continue
                 else:
                     days[day_idx]['is_free'] = True
+                    days[day_idx]['doctors'].append(doctor.id)
         return {'days': days}
 
 
@@ -113,7 +114,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     options = serializers.PrimaryKeyRelatedField(
         # queryset=Option.objects.all(),
         many=True, read_only=True)
-    date = serializers.DateField(write_only=True)
+    # date = serializers.DateField(write_only=True)
 
     class Meta:
         model = Appointment
@@ -198,7 +199,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         services: Opt[list[Service]] = validated_data.get('services')
         options = [service.options.first() for service in services]
         appointment: Appointment = Appointment.objects.create(
-            patient=patient, doctor=doctor)
+            patient=patient, doctor=doctor, date=date)
         app_options = [AppointmentOption(
             appointment=appointment, option=option) for option in options]
         AppointmentOption.objects.bulk_create(app_options)

@@ -26,7 +26,7 @@ def date_validator(date: date):
 def services_validator(services: Service):
     if not services:
         raise serializers.ValidationError(
-            'Услуга - обязательное поле'
+            'Это поле не может быть пустым.'
         )
     specialization = None
     for service in services:
