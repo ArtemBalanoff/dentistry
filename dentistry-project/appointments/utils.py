@@ -9,6 +9,25 @@ from django.db.models import QuerySet
 from rest_framework.serializers import ValidationError
 
 
+def timeslots_list(doctor: DoctorProfile, date, doctor_schedule):
+    busy_timeslots: QuerySet = doctor.timeslots.filter(date=date)
+    busy_timeslots_values = busy_timeslots.values_list('start_time', flat=True)
+    timeslots = []
+    start_time: dt.time = doctor_schedule.start_time
+    end_time: dt.time = doctor_schedule.end_time
+    current_time = dt.datetime.now().time()
+    while start_time != end_time:
+        is_free = False if (
+            start_time in busy_timeslots_values
+            or start_time < current_time) else True
+        timeslots.append(
+            {'time': start_time, 'is_free': is_free}
+        )
+        start_time = time_add_timedelta(
+            start_time, timedelta(minutes=SLOT_DURATION))
+    return timeslots
+
+
 def time_add_timedelta(time: time, timedelta: timedelta):
     return (datetime.combine(datetime.today(), time) + timedelta).time()
 
@@ -19,43 +38,29 @@ def necessary_timeslots_count_from_services(services: Service):
 
 
 def check_doctor_working_day(
-        current_date: dt.date,
+        date: dt.date,
         doctor: DoctorProfile,
         services: Service):
-    week_day: int = current_date.weekday()
-    doctor_day: DoctorSchedule = doctor.schedule.filter(
+    week_day: int = date.weekday()
+    doctor_schedule: DoctorSchedule = doctor.schedule.filter(
         week_day=week_day).first()
-    if not doctor_day:
+    if not doctor_schedule:
         raise ValidationError('В этот день доктор не работает по расписанию')
     current_date_exception_cases = (
-        ExceptionCase.objects.filter(date=current_date).all())
+        ExceptionCase.objects.filter(date=date).all())
     if current_date_exception_cases.filter(doctor=None).exists():
         raise ValidationError(
             'В этот день клиника не работает из-за обстоятельств')
     if current_date_exception_cases.filter(doctor=doctor).exists():
         raise ValidationError(
             'В этот день доктор не работает из-за обстоятельств')
-    busy_timeslots: QuerySet = doctor.timeslots.filter(
-        date=current_date)
-    busy_timeslots_start_times = busy_timeslots.values_list(
-        'start_time', flat=True)
-    timeslots = []
-    start_time: dt.time = doctor_day.start_time
-    end_time: dt.time = doctor_day.end_time
-    curent_time = dt.datetime.now().time()
-    while start_time != end_time:
-        timeslot_is_free = False if (
-            start_time in busy_timeslots_start_times
-            or start_time < curent_time) else True
-        timeslots.append(timeslot_is_free)
-        start_time = time_add_timedelta(
-            start_time, timedelta(minutes=SLOT_DURATION))
+    timeslots = timeslots_list(doctor, date, doctor_schedule)
     necessary_timelots_count = necessary_timeslots_count_from_services(
         services)
     try:
         free_time_slots_count = 0
         for timeslot in timeslots:
-            if timeslot:
+            if timeslot['is_free']:
                 free_time_slots_count += 1
             else:
                 free_time_slots_count = 0
