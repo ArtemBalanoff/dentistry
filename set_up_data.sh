@@ -20,20 +20,20 @@ echo "import datetime as dt; \
     doc_ter_1_profile = DoctorProfile.objects.create(user=doc_ter_1, carier_start=dt.date(year=2020, month=1, day=1), specialization=spec_ter); \
     doc_ter_2_profile = DoctorProfile.objects.create(user=doc_ter_2, carier_start=dt.date(year=2018, month=1, day=1), specialization=spec_ter); \
     \
-    day_0_sch = BaseSchedule.objects.create(week_day=(day_0 := (dt.date.today().weekday()) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
-    day_1_sch = BaseSchedule.objects.create(week_day=(day_1 := (dt.date.today().weekday() + 1) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
-    day_2_sch = BaseSchedule.objects.create(week_day=(day_2 := (dt.date.today().weekday() + 2) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=12)); \
-    day_3_sch = BaseSchedule.objects.create(week_day=(day_3 := (dt.date.today().weekday() + 3) % 7), is_open=False); \
-    day_4_sch = BaseSchedule.objects.create(week_day=(day_4 := (dt.date.today().weekday() + 4) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
+    day_0_sch = BaseSchedule.objects.create(weekday=(day_0 := (dt.date.today().weekday()) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
+    day_1_sch = BaseSchedule.objects.create(weekday=(day_1 := (dt.date.today().weekday() + 1) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
+    day_2_sch = BaseSchedule.objects.create(weekday=(day_2 := (dt.date.today().weekday() + 2) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=12)); \
+    day_3_sch = BaseSchedule.objects.create(weekday=(day_3 := (dt.date.today().weekday() + 3) % 7), is_open=False); \
+    day_4_sch = BaseSchedule.objects.create(weekday=(day_4 := (dt.date.today().weekday() + 4) % 7), start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
     \
-    day_0_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, week_day=day_0, start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
-    day_0_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, week_day=day_0, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
+    day_0_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, weekday=day_0, start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
+    day_0_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, weekday=day_0, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
     \
-    day_1_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, week_day=day_1, start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
-    day_1_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, week_day=day_1, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
+    day_1_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, weekday=day_1, start_time=dt.time(hour=10), end_time=dt.time(hour=14)); \
+    day_1_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, weekday=day_1, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
     \
-    day_2_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, week_day=day_2, start_time=dt.time(hour=10), end_time=dt.time(hour=12)); \
-    day_2_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, week_day=day_2, start_time=dt.time(hour=11), end_time=dt.time(hour=12)); \
+    day_2_doc_ter_1_sch = DoctorSchedule.objects.create(doctor=doc_ter_1_profile, weekday=day_2, start_time=dt.time(hour=10), end_time=dt.time(hour=12)); \
+    day_2_doc_ter_2_sch = DoctorSchedule.objects.create(doctor=doc_ter_2_profile, weekday=day_2, start_time=dt.time(hour=11), end_time=dt.time(hour=12)); \
     \
     patient_1 = User.objects.create(username='patient_1', first_name='Андрей', last_name='Крамер', password='password'); \
     patient_2 = User.objects.create(username='patient_2', first_name='Саня', last_name='Бетон', password='password'); \

@@ -5,7 +5,7 @@ from django.contrib import messages
 
 @admin.register(BaseSchedule)
 class BaseScheduleAdmin(admin.ModelAdmin):
-    list_display = ('week_day', 'start_time', 'end_time', 'is_open')
+    list_display = ('weekday', 'start_time', 'end_time', 'is_open')
     list_editable = ('start_time', 'end_time', 'is_open')
 
     def save_model(self, request, obj, form, change):
@@ -20,9 +20,9 @@ class BaseScheduleAdmin(admin.ModelAdmin):
 
 @admin.register(DoctorSchedule)
 class DoctorScheduleAdmin(admin.ModelAdmin):
-    list_display = ('doctor', 'week_day', 'start_time', 'end_time')
-    list_editable = ('start_time', 'end_time')
-    list_filter = ('doctor', 'week_day')
+    list_display = ('doctor', 'weekday', 'start_time', 'end_time', 'is_working')
+    list_editable = ('start_time', 'end_time', 'is_working')
+    list_filter = ('doctor', 'weekday')
 
     def save_model(self, request, obj, form, change):
         if hasattr(obj, '_message_too_early'):

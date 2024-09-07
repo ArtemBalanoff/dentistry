@@ -15,4 +15,5 @@ done
 
 cd dentistry-project
 rm -f "db.sqlite3"
+source venv/bin/activate
 $python manage.py makemigrations

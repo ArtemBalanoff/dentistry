@@ -1,51 +1,34 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from .models import CustomUser, DoctorProfile, PatientProfile, Specialization
+from .models import (DoctorUser, PatientUser,
+                     DoctorProfile, PatientProfile, Specialization)
 
 
 class DoctorProfileInline(admin.StackedInline):
     model = DoctorProfile
-    can_delete = True
-    extra = 0
-    max_num = 1
+    can_delete = False
     verbose_name_plural = 'Профиль Доктора'
 
 
 class PatientProfileInline(admin.StackedInline):
     model = PatientProfile
-    can_delete = True
-    extra = 0
-    max_num = 1
+    can_delete = False
     verbose_name_plural = 'Профиль Пациента'
 
 
-class UserInLine(admin.StackedInline):
-    model = CustomUser
-    extra = 0
-    max_num = 0
-    verbose_name_plural = 'Профиль Пользователя'
-
-
-@admin.register(CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):
-    inlines = (DoctorProfileInline, PatientProfileInline,)
-    fields = ('username', 'first_name', 'last_name',
-              'password', 'is_doctor')
-
-
-@admin.register(DoctorProfile)
+@admin.register(DoctorUser)
 class DoctorAdmin(admin.ModelAdmin):
-    # list_display = '__all__'
-    # inlines = (UserInLine,)
-    pass
+    inlines = (DoctorProfileInline,)
+    fields = ('username', 'first_name',
+              'last_name', 'password')
 
 
-@admin.register(PatientProfile)
+@admin.register(PatientUser)
 class PatientAdmin(admin.ModelAdmin):
-    # list_display = '__all__'
-    # inlines = (UserInLine,)
-    pass
+    inlines = (PatientProfileInline,)
+    fields = ('username', 'first_name',
+              'last_name', 'password')
 
 
 @admin.register(Specialization)

@@ -9,8 +9,8 @@ from users.models import DoctorProfile
 
 
 def date_validator(date: dt.date):
-    if BaseSchedule.objects.filter(week_day=date.weekday(),
-                                   is_open=False).exists():
+    '''Проверка даты на доступность по базовому расписанию клиники и внеплановому.'''
+    if not BaseSchedule.objects.get(weekday=date.weekday()).is_open:
         raise serializers.ValidationError(
             'В этот день стоматология не работает.'
         )
@@ -25,6 +25,7 @@ def date_validator(date: dt.date):
 
 
 def services_validator(services: Service):
+    '''Проверка услуг на присутствие и принадлежность к одинаковой специальности.'''
     if not services:
         raise serializers.ValidationError(
             'Это поле не может быть пустым.'
@@ -41,12 +42,13 @@ def services_validator(services: Service):
 
 
 def timeslots_validator(timeslots: list[TimeSlot]):
+    '''Проверка временных слотов на последовательность.'''
     timeslots.sort()
     end_time = None
     for time_slot in timeslots:
         if end_time and time_slot != end_time:
             raise serializers.ValidationError(
-                'Временные слоты не последовательны'
+                'Временные слоты не последовательны.'
             )
         end_time = time_add_timedelta(time_slot, dt.timedelta(
             minutes=SLOT_DURATION))
@@ -54,17 +56,19 @@ def timeslots_validator(timeslots: list[TimeSlot]):
 
 
 def timeslots_freedom_validator(doctor: DoctorProfile, timeslots: list[TimeSlot], date: dt.date):
+    '''Проверка, не заняты ли временные слоты.'''
     occupied_slots = TimeSlot.objects.filter(date=date, doctor=doctor)
     occupied_slots_start_times = occupied_slots.values_list(
         'start_time', flat=True
     )
     if set(occupied_slots_start_times) & set(timeslots):
         raise serializers.ValidationError(
-            'Один или несколько слотов уже заняты'
+            'Один или несколько слотов уже заняты.'
         )
 
 
 def timeslots_correct_duration_validator(timeslots: list[TimeSlot], services: list[Service]):
+    '''Проверка на соответствие продолжительности услуг и слотов.'''
     nec_timeslots_count = necessary_timeslots_count_from_services(services)
     nec_timeslots_count_in_hours = nec_timeslots_count * SLOT_DURATION / 60
     if nec_timeslots_count > len(timeslots):
@@ -80,15 +84,18 @@ def timeslots_correct_duration_validator(timeslots: list[TimeSlot], services: li
 
 
 def doctor_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorProfile, date: dt.date):
+    '''Проверка временных слотов на доступность по расписанию врача.'''
     slots_start_time = timeslots[0]
     slots_end_time = time_add_timedelta(
         timeslots[-1], dt.timedelta(minutes=SLOT_DURATION))
-    if not DoctorSchedule.objects.filter(
-        doctor=doctor,
-        week_day=date.weekday(),
-        start_time__lte=slots_start_time,
-        end_time__gte=slots_end_time,
-    ):
+    doctor_schedule: DoctorSchedule = doctor.schedule.get(weekday=date.weekday())
+    if not doctor_schedule.is_working:
+        raise serializers.ValidationError(
+            'Доктор по расписанию не '
+            'работает в этот день.'
+        )
+    if not (doctor_schedule.start_time <= slots_start_time
+            and doctor_schedule.end_time >= slots_end_time):
         raise serializers.ValidationError(
             'Доктор по расписанию не '
             'работает в это время.'
@@ -96,6 +103,7 @@ def doctor_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorP
 
 
 def doctor_exc_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorProfile, date: dt.date):
+    '''Проверка временных слотов на доступность по внеплановому расписанию врача.'''
     slots_start_time = timeslots[0]
     slots_end_time = time_add_timedelta(
         timeslots[-1], dt.timedelta(minutes=SLOT_DURATION))
@@ -112,6 +120,7 @@ def doctor_exc_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: Doc
 
 
 def doctor_spec_correspondence_to_services(doctor: DoctorProfile, services: list[Service]):
+    '''Провека услуг на соответствие специальности доктора.'''
     if doctor.specialization != services[0].specialization:
         raise serializers.ValidationError(
             'Выбранные услуги оказывает врач другой специальности.'

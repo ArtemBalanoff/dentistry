@@ -3,37 +3,26 @@ from transliterate import translit
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from dentistry.constants import NAME_MAX_LENGTH
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
-    is_doctor = models.BooleanField('Доктор', default=False)
-
-    # def save(self, *args, **kwargs):
-    #     if self.is_doctor:
-    #         if not hasattr(self, 'doctor_profile'):
-    #             raise ValidationError('Доктор должен иметь связанный профиль доктора.')
-    #         if hasattr(self, 'patient_profile'):
-    #             raise ValidationError('Доктор не должен иметь связанный профиль пациента.')
-    #     else:
-    #         if hasattr(self, 'doctor_profile'):
-    #             raise ValidationError('Пациент не должен иметь связанный профиль доктора.')
-    #         if not hasattr(self, 'patient_profile'):
-    #             raise ValidationError('Пациент должен иметь связанный профиль пациента.')
-
-    #     try:
-    #         super().save(*args, **kwargs)
-    #     except ValidationError as e:
-    #         # Превращаем ошибку валидации в исключение, чтобы админка показала сообщение
-    #         raise ValidationError(e.message_dict)
+    # is_doctor = models.BooleanField('Доктор', default=False)
+    pass
 
 
-class PatientProfile(models.Model):
-    user = models.OneToOneField(
-        CustomUser, on_delete=models.CASCADE, related_name='patient_profile')
-    age = models.SmallIntegerField('Возраст')
-
+class DoctorUser(CustomUser):
     class Meta:
-        verbose_name = 'профиль пациента'
+        proxy = True
+        verbose_name = 'доктор'
+        verbose_name_plural = 'Доктора'
+
+
+class PatientUser(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = 'пациент'
         verbose_name_plural = 'Пациенты'
 
 
@@ -74,8 +63,19 @@ class DoctorProfile(models.Model):
         return f'{stage} лет (год)'
 
 
+class PatientProfile(models.Model):
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name='patient_profile')
+    age = models.SmallIntegerField('Возраст')
+
+    class Meta:
+        verbose_name = 'профиль пациента'
+        verbose_name_plural = 'Пациенты'
+
+
 class Specialization(models.Model):
     name = models.CharField('Название', max_length=NAME_MAX_LENGTH)
+    slug = models.SlugField('Слаг')
 
     class Meta:
         verbose_name = 'специализация врача'
@@ -83,3 +83,11 @@ class Specialization(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(post_save, sender=DoctorProfile)
+def auto_create_doctors_schedule(sender, instance, created, **kwargs):
+    from schedule.models import DoctorSchedule
+    if created:
+        schedule = [DoctorSchedule(doctor=instance, weekday=weekday) for weekday in range(6)]
+        DoctorSchedule.objects.bulk_create(schedule)
