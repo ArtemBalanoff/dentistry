@@ -15,7 +15,7 @@ from .validators import (
     timeslots_correct_duration_validator,
     timeslots_freedom_validator,
     timeslots_validator)
-from .utils import check_doctor_working_day, timeslots_list
+from .utils import check_doctor_working_day, get_timeslots_list
 
 
 class TimeSlotSerializer(serializers.ModelSerializer):
@@ -48,8 +48,8 @@ class AvailableTimeSlotsSerializer(serializers.Serializer):
         doctor: Opt[DoctorProfile] = data.get('doctor')
         date: Opt[dt.date] = data.get('date')
         doctor_schedule: Opt[DoctorSchedule] = (
-            doctor.schedule.get(week_day=date.weekday()))
-        timeslots = timeslots_list(doctor, date, doctor_schedule)
+            doctor.schedule.get(weekday=date.weekday()))
+        timeslots = get_timeslots_list(doctor, date, doctor_schedule)
         return {'timeslots': timeslots}
 
 

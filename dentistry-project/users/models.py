@@ -8,8 +8,13 @@ from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
-    # is_doctor = models.BooleanField('Доктор', default=False)
+    # @property
+    # def is_doctor(self):
+    #     return hasattr(self, 'DoctorProfile')
     pass
+
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'
 
 
 class DoctorUser(CustomUser):
@@ -36,7 +41,7 @@ class DoctorProfile(models.Model):
         verbose_name='Специализация',
         related_name='doctors'
     )
-    slug = models.SlugField('Слаг', unique=True, blank=True, null=True)
+    # slug = models.SlugField('Слаг', unique=True, blank=True, null=True)
 
     class Meta:
         verbose_name = 'профиль врача'
@@ -45,16 +50,16 @@ class DoctorProfile(models.Model):
     def __str__(self):
         return self.user.first_name + ' ' + self.user.last_name
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            unique_slug = translit(value=f'{self.user.last_name}_{self.user.first_name}',
-                                   reversed=True)
-            idx = 1
-            while DoctorProfile.objects.filter(slug=unique_slug).exists():
-                unique_slug = f'{unique_slug}_idx'
-                idx += 1
-            self.slug = unique_slug
-        return super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         unique_slug = translit(value=f'{self.user.last_name}_{self.user.first_name}',
+    #                                reversed=True)
+    #         idx = 1
+    #         while DoctorProfile.objects.filter(slug=unique_slug).exists():
+    #             unique_slug = f'{unique_slug}_idx'
+    #             idx += 1
+    #         self.slug = unique_slug
+    #     return super().save(*args, **kwargs)
 
     @property
     def stage(self):
@@ -75,7 +80,7 @@ class PatientProfile(models.Model):
 
 class Specialization(models.Model):
     name = models.CharField('Название', max_length=NAME_MAX_LENGTH)
-    slug = models.SlugField('Слаг')
+    # slug = models.SlugField('Слаг')
 
     class Meta:
         verbose_name = 'специализация врача'
@@ -89,5 +94,5 @@ class Specialization(models.Model):
 def auto_create_doctors_schedule(sender, instance, created, **kwargs):
     from schedule.models import DoctorSchedule
     if created:
-        schedule = [DoctorSchedule(doctor=instance, weekday=weekday) for weekday in range(6)]
+        schedule = [DoctorSchedule(doctor=instance, weekday=weekday) for weekday in range(7)]
         DoctorSchedule.objects.bulk_create(schedule)

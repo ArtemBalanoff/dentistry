@@ -40,11 +40,12 @@ class BaseSchedule(models.Model):
     def clean(self):
         if not self.is_open:
             return None
-        doctors_too_early = DoctorSchedule.objects.filter(weekday=self.weekday, start_time__lt=self.start_time)
+        doctors_too_early = DoctorSchedule.objects.filter(
+            weekday=self.weekday, start_time__lt=self.start_time)
         if doctors_too_early:
             self._message_doctors_too_early = (
                 f'Расписания докторов {", ".join([str(doctor) for doctor in doctors_too_early])} '
-                f'в {self.get_weekday_display()} начинались слишком рано для только что внесенных изменений. '
+                f'в {self.get_weekday_display().lower()} начинались слишком рано для только что внесенных изменений. '
                 f'Теперь их расписания начинаются с {self.start_time.strftime("%H:00")}')
             doctors_too_early.update(start_time=self.start_time)
 

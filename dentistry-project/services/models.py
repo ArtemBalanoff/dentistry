@@ -21,7 +21,7 @@ class Service(models.Model):
         related_name='services',
         on_delete=models.CASCADE,
     )
-    slug = models.SlugField('Слаг')
+    # slug = models.SlugField('Слаг')
 
     class Meta:
         verbose_name = 'услуга'

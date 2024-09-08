@@ -3,12 +3,12 @@ from schedule.models import BaseSchedule, DoctorSchedule, ExceptionCase
 from rest_framework import serializers
 from services.models import Service
 from appointments.models import TimeSlot
-from .utils import necessary_timeslots_count_from_services, time_add_timedelta
+from .utils import get_necessary_timeslots_count_from_services, time_add_timedelta
 from dentistry.constants import SLOT_DURATION
 from users.models import DoctorProfile
 
 
-def date_validator(date: dt.date):
+def date_validator(date: dt.date) -> dt.date:
     '''Проверка даты на доступность по базовому расписанию клиники и внеплановому.'''
     if not BaseSchedule.objects.get(weekday=date.weekday()).is_open:
         raise serializers.ValidationError(
@@ -24,7 +24,7 @@ def date_validator(date: dt.date):
     return date
 
 
-def services_validator(services: Service):
+def services_validator(services: list[Service]) -> list[Service]:
     '''Проверка услуг на присутствие и принадлежность к одинаковой специальности.'''
     if not services:
         raise serializers.ValidationError(
@@ -41,7 +41,7 @@ def services_validator(services: Service):
     return services
 
 
-def timeslots_validator(timeslots: list[TimeSlot]):
+def timeslots_validator(timeslots: list[TimeSlot]) -> list[TimeSlot]:
     '''Проверка временных слотов на последовательность.'''
     timeslots.sort()
     end_time = None
@@ -55,7 +55,9 @@ def timeslots_validator(timeslots: list[TimeSlot]):
     return timeslots
 
 
-def timeslots_freedom_validator(doctor: DoctorProfile, timeslots: list[TimeSlot], date: dt.date):
+def timeslots_freedom_validator(
+        doctor: DoctorProfile, timeslots: list[TimeSlot],
+        date: dt.date) -> None:
     '''Проверка, не заняты ли временные слоты.'''
     occupied_slots = TimeSlot.objects.filter(date=date, doctor=doctor)
     occupied_slots_start_times = occupied_slots.values_list(
@@ -67,9 +69,10 @@ def timeslots_freedom_validator(doctor: DoctorProfile, timeslots: list[TimeSlot]
         )
 
 
-def timeslots_correct_duration_validator(timeslots: list[TimeSlot], services: list[Service]):
+def timeslots_correct_duration_validator(
+        timeslots: list[TimeSlot], services: list[Service]) -> None:
     '''Проверка на соответствие продолжительности услуг и слотов.'''
-    nec_timeslots_count = necessary_timeslots_count_from_services(services)
+    nec_timeslots_count = get_necessary_timeslots_count_from_services(services)
     nec_timeslots_count_in_hours = nec_timeslots_count * SLOT_DURATION / 60
     if nec_timeslots_count > len(timeslots):
         raise serializers.ValidationError(
@@ -83,7 +86,9 @@ def timeslots_correct_duration_validator(timeslots: list[TimeSlot], services: li
         )
 
 
-def doctor_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorProfile, date: dt.date):
+def doctor_schedule_freedom_validator(
+        timeslots: list[TimeSlot], doctor: DoctorProfile,
+        date: dt.date) -> None:
     '''Проверка временных слотов на доступность по расписанию врача.'''
     slots_start_time = timeslots[0]
     slots_end_time = time_add_timedelta(
@@ -102,7 +107,9 @@ def doctor_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorP
         )
 
 
-def doctor_exc_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: DoctorProfile, date: dt.date):
+def doctor_exc_schedule_freedom_validator(
+        timeslots: list[TimeSlot], doctor: DoctorProfile,
+        date: dt.date) -> None:
     '''Проверка временных слотов на доступность по внеплановому расписанию врача.'''
     slots_start_time = timeslots[0]
     slots_end_time = time_add_timedelta(
@@ -119,7 +126,8 @@ def doctor_exc_schedule_freedom_validator(timeslots: list[TimeSlot], doctor: Doc
         )
 
 
-def doctor_spec_correspondence_to_services(doctor: DoctorProfile, services: list[Service]):
+def doctor_spec_correspondence_to_services(
+        doctor: DoctorProfile, services: list[Service]) -> None:
     '''Провека услуг на соответствие специальности доктора.'''
     if doctor.specialization != services[0].specialization:
         raise serializers.ValidationError(
