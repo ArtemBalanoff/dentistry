@@ -1,5 +1,3 @@
-import datetime as dt
-from typing import Any
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import (DoctorUser, PatientUser,
@@ -7,7 +5,6 @@ from .models import (DoctorUser, PatientUser,
 from services.models import Service
 from .utils import format_phone
 from django.contrib import messages
-
 
 
 class ServiceInline(admin.StackedInline):

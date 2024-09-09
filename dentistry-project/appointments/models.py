@@ -29,8 +29,10 @@ class Appointment(models.Model):
 
 
 class AppointmentOption(models.Model):
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name='appointment_options')
+    option = models.ForeignKey(
+        Option, on_delete=models.CASCADE, related_name='option_appointments')
 
 
 class TimeSlot(models.Model):

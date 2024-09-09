@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .models import Appointment, AppointmentOption, TimeSlot
 from schedule.models import DoctorSchedule
 from users.models import DoctorProfile, PatientProfile
-from services.models import Service
+from services.models import Option, Service
 from .validators import (
     date_validator,
     doctor_exc_schedule_freedom_validator,
@@ -90,15 +90,31 @@ class AvailableDaysSerializer(serializers.Serializer):
         return {'days': days_dict}
 
 
+class AppointmentsSerializer_1(serializers.ModelSerializer):
+    timeslots = serializers.ListField(child=serializers.TimeField(),
+                                      required=True, write_only=True)
+    options = serializers.PrimaryKeyRelatedField(
+        queryset=Option.objects.all(), many=True, required=False)
+
+    class Meta:
+        model = Appointment
+        fields = ('patient', 'doctor', 'date', 'timeslots', 'options')
+
+    def validate_date(self, date: dt.date):
+        return date_validator(date)
+
+    def validate_timeslots(self, timeslots: list[TimeSlot]):
+        return timeslots_validator(timeslots)
+
+
 class AppointmentSerializer(serializers.ModelSerializer):
     timeslots = serializers.ListField(child=serializers.TimeField(),
                                       required=True, write_only=True)
-    services = serializers.SlugRelatedField(
-        queryset=Service.objects.all(),
-        slug_field='id', many=True,
+    services = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.all(), many=True,
         write_only=True)
-    options = serializers.PrimaryKeyRelatedField(
-        many=True, read_only=True)
+    # options = serializers.PrimaryKeyRelatedField(
+    #     queryset=Option.objects.all(), many=True, required=False)
 
     class Meta:
         model = Appointment
@@ -114,6 +130,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def validate_services(self, services: list[Service]):
         return services_validator(services)
 
+    # def validate_options(self, options: list[Option]):
+    #     if self.context.get('view').action == 'create':
+    #         return None
+    #     return options
+
     def validate(self, data: dict[str, Any]):
         timeslots: Opt[list[dt.time]] = data.get('timeslots')
         date: Opt[dt.date] = data.get('date')
@@ -125,6 +146,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         doctor_exc_schedule_freedom_validator(timeslots, doctor, date)
         doctor_spec_correspondence_to_services(doctor, services)
         return data
+
+    def update(self, instance, validated_data):
+        options = instance.appointment_options.values('option')
+        return super().update(instance, validated_data)
 
     def create(self, validated_data: dict):
         validated_data.get('services')
@@ -151,6 +176,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance: Appointment):
         repr_dict: dict = super().to_representation(instance)
         repr_dict['price'] = instance.price
+        repr_dict['services'] = [
+            service.id for service in self.validated_data.get('services')]
         timeslots: list = []
         for timeslot in instance.timeslots.all():
             timeslots.append(TimeSlotSerializer(timeslot).data)
