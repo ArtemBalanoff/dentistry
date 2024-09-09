@@ -1,20 +1,33 @@
-from datetime import date
-from transliterate import translit
+import datetime as dt
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from dentistry.constants import NAME_MAX_LENGTH
+from dentistry.constants import NAME_MAX_LENGTH, PHONE_MAX_LENGTH
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .validators import phone_number_validator
 
 
 class CustomUser(AbstractUser):
-    # @property
-    # def is_doctor(self):
-    #     return hasattr(self, 'DoctorProfile')
-    pass
+    username = None
+    first_name = models.CharField('Имя', max_length=NAME_MAX_LENGTH)
+    last_name = models.CharField('Фамилия', max_length=NAME_MAX_LENGTH)
+    surname = models.CharField('Отчество', max_length=NAME_MAX_LENGTH)
+    phone_number = models.CharField(
+        'Номер телефона', max_length=PHONE_MAX_LENGTH,
+        unique=True, validators=(phone_number_validator,))
+    birth_day = models.DateField('День Рождения', blank=True, null=True)
+    USERNAME_FIELD = 'phone_number'
 
     def __str__(self):
         return f'{self.last_name} {self.first_name}'
+
+    @property
+    def age(self):
+        if not self.birth_day:
+            return '-'
+        stage = int((dt.date.today() - self.birth_day).total_seconds()
+                    // (60 * 60 * 24 * 30 * 12))
+        return f'{stage} лет (год(а))'
 
 
 class DoctorUser(CustomUser):
@@ -41,7 +54,6 @@ class DoctorProfile(models.Model):
         verbose_name='Специализация',
         related_name='doctors'
     )
-    # slug = models.SlugField('Слаг', unique=True, blank=True, null=True)
 
     class Meta:
         verbose_name = 'профиль врача'
@@ -50,37 +62,28 @@ class DoctorProfile(models.Model):
     def __str__(self):
         return self.user.first_name + ' ' + self.user.last_name
 
-    # def save(self, *args, **kwargs):
-    #     if not self.slug:
-    #         unique_slug = translit(value=f'{self.user.last_name}_{self.user.first_name}',
-    #                                reversed=True)
-    #         idx = 1
-    #         while DoctorProfile.objects.filter(slug=unique_slug).exists():
-    #             unique_slug = f'{unique_slug}_idx'
-    #             idx += 1
-    #         self.slug = unique_slug
-    #     return super().save(*args, **kwargs)
-
     @property
     def stage(self):
-        stage = int((date.today() - self.carier_start).total_seconds()
+        stage = int((dt.date.today() - self.carier_start).total_seconds()
                     // (60 * 60 * 24 * 30 * 12))
-        return f'{stage} лет (год)'
+        return f'{stage} лет (год(а))'
 
 
 class PatientProfile(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name='patient_profile')
-    age = models.SmallIntegerField('Возраст')
 
     class Meta:
         verbose_name = 'профиль пациента'
         verbose_name_plural = 'Пациенты'
 
+    @property
+    def appointments_count(self):
+        return self.appointments.count()
+
 
 class Specialization(models.Model):
     name = models.CharField('Название', max_length=NAME_MAX_LENGTH)
-    # slug = models.SlugField('Слаг')
 
     class Meta:
         verbose_name = 'специализация врача'

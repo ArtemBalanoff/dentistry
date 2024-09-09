@@ -82,25 +82,10 @@ class DoctorSchedule(models.Model):
         return str(self.doctor)
 
     def clean(self):
-        if not self.start_time < self.end_time:
-            raise ValidationError(
-                'Время начала работы должно быть меньше времени конца работы')
-        base_schedule = BaseSchedule.objects.get(
-            weekday=self.weekday)
-        if self.start_time < base_schedule.start_time:
-            self.start_time = base_schedule.start_time
-            self._message_too_early = (
-                f'В {self.get_weekday_display().lower()} клиника работает '
-                f'с {base_schedule.start_time.strftime("%H:00")}. Время '
-                f'начала работы врача {self.doctor} изменено на '
-                f'{base_schedule.start_time.strftime("%H:00")}.')
-        if self.end_time > base_schedule.end_time:
-            self.end_time = base_schedule.end_time
-            self._message_too_late = (
-                f'В {self.get_weekday_display().lower()} клиника работает '
-                f'до {base_schedule.end_time.strftime("%H:00")}. Время '
-                f'начала работы врача {self.doctor} изменено на '
-                f'{base_schedule.end_time.strftime("%H:00")}.')
+        from .validators import (
+            start_end_time_validator, compare_doctor_schedule_to_base)
+        start_end_time_validator(self)
+        compare_doctor_schedule_to_base(self)
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -110,7 +95,8 @@ class DoctorSchedule(models.Model):
 class ExceptionCase(models.Model):
     doctor = models.ForeignKey(
         DoctorProfile, related_name='exception_cases', verbose_name='Доктор',
-        on_delete=models.CASCADE, null=True, blank=True)
+        on_delete=models.CASCADE, null=True, blank=True,
+        help_text='Оставьте поле пустым, если речь идет об исключении для всей клиники')
     date = models.DateField('Дата')
     reason = models.TextField('Причина', max_length=REASON_MAX_LENGTH,
                               default='Не указано')

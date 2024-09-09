@@ -1,60 +1,104 @@
+import datetime as dt
 from typing import Any
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.db.models.query import QuerySet
-from django.http import HttpRequest
-
 from .models import (DoctorUser, PatientUser,
                      DoctorProfile, PatientProfile, Specialization)
+from services.models import Service
+from .utils import format_phone
+from django.contrib import messages
+
+
+
+class ServiceInline(admin.StackedInline):
+    model = Service
+    extra = 0
+    verbose_name = 'Услуга'
+    verbose_name_plural = 'услуги'
 
 
 class DoctorProfileInline(admin.StackedInline):
     model = DoctorProfile
     can_delete = False
-    verbose_name_plural = 'Профиль Доктора'
+    verbose_name = 'Профиль Доктора'
+    verbose_name_plural = 'профили докторов'
 
 
 class PatientProfileInline(admin.StackedInline):
     model = PatientProfile
     can_delete = False
-    verbose_name_plural = 'Профиль Пациента'
+    verbose_name = 'Профиль Пациента'
+    verbose_name_plural = 'профили пациентов'
 
 
 @admin.register(DoctorUser)
 class DoctorAdmin(admin.ModelAdmin):
     inlines = (DoctorProfileInline,)
-    list_display = ('first_name', 'last_name', 'get_doctor_specialization')
-    fields = ('username', 'first_name',
-              'last_name', 'password')
+    list_display = ('last_name', 'first_name', 'surname', 'get_doctor_specialization',
+                    'get_doctor_stage', 'get_phone_number')
+    fields = ('phone_number', 'last_name', 'first_name', 'surname',
+              'password', 'birth_day')
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        return queryset.filter(doctor_profile__isnull=False)
+        return super().get_queryset(request).filter(doctor_profile__isnull=False)
 
     @admin.display(description='Специальность')
     def get_doctor_specialization(self, obj):
         return obj.doctor_profile.specialization
 
+    @admin.display(description='Стаж')
+    def get_doctor_stage(self, obj):
+        return obj.doctor_profile.stage
+
+    @admin.display(description='Номер телефона')
+    def get_phone_number(self, obj):
+        return format_phone(obj.phone_number)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        obj = form.instance
+        if not hasattr(obj, 'doctor_profile'):
+            obj.delete()
+            self.message_user(
+                request,
+                'Доктор не был создан. Пожалуйста, заполните все поля профиля доктора',
+                level=messages.ERROR)
+
 
 @admin.register(PatientUser)
 class PatientAdmin(admin.ModelAdmin):
     inlines = (PatientProfileInline,)
-    list_display = ('first_name', 'last_name', 'get_patient_age')
-    fields = ('username', 'first_name',
-              'last_name', 'password')
+    list_display = ('last_name', 'first_name', 'surname', 'get_age',
+                    'get_appointments_count', 'get_phone_number')
+    fields = ('phone_number', 'last_name', 'first_name', 'surname',
+              'password', 'birth_day')
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        return queryset.filter(patient_profile__isnull=False)
+        return super().get_queryset(request).filter(patient_profile__isnull=False)
 
     @admin.display(description='Возраст')
-    def get_patient_age(self, obj):
-        return obj.patient_profile.age
+    def get_age(self, obj):
+        return obj.age
+
+    @admin.display(description='История приемов')
+    def get_appointments_count(self, obj):
+        return obj.patient_profile.appointments_count
+
+    @admin.display(description='Номер телефона')
+    def get_phone_number(self, obj):
+        return format_phone(obj.phone_number)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        obj = form.instance
+        if not hasattr(obj, 'patient_profile'):
+            PatientProfile.objects.create(user=obj)
 
 
 @admin.register(Specialization)
 class SpecializationAdmin(admin.ModelAdmin):
-    pass
+    inlines = (ServiceInline,)
+    list_display = ('name',)
 
 
 admin.site.unregister(Group)
