@@ -10,7 +10,15 @@ class OptionInLine(admin.TabularInline):
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     inlines = (OptionInLine,)
-    list_display = ('name', 'specialization', 'duration')
+    list_display = ('name', 'specialization', 'duration', 'get_min_price', 'get_max_price')
+
+    @admin.display(description='Минимальная цена')
+    def get_min_price(self, obj):
+        return format(obj.min_price, ',').replace(',', '.')
+
+    @admin.display(description='Максимальная цена')
+    def get_max_price(self, obj):
+        return format(obj.max_price, ',').replace(',', '.')
 
 
 @admin.register(Option)

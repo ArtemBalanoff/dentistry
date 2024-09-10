@@ -64,9 +64,8 @@ class DoctorProfile(models.Model):
 
     @property
     def stage(self):
-        stage = int((dt.date.today() - self.carier_start).total_seconds()
-                    // (60 * 60 * 24 * 30 * 12))
-        return f'{stage} лет (год(а))'
+        return int((dt.date.today() - self.carier_start).total_seconds()
+                   // (60 * 60 * 24 * 30 * 12))
 
 
 class PatientProfile(models.Model):

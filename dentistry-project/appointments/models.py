@@ -17,7 +17,8 @@ class Appointment(models.Model):
         related_name='appointments',
         on_delete=models.CASCADE
     )
-    options = models.ManyToManyField(Option, through='AppointmentOption')
+    options = models.ManyToManyField(
+        Option, through='AppointmentOption', related_name='appointments')
 
     class Meta:
         verbose_name = 'прием'
@@ -27,12 +28,25 @@ class Appointment(models.Model):
     def price(self):
         return sum(self.options.values_list('price', flat=True))
 
+    @property
+    def services(self):
+        return [option.service for option in self.options.all()]
+
+    @property
+    def min_price(self):
+        return sum([service.min_price for service in self.services])
+
+    @property
+    def max_price(self):
+        return sum([service.max_price for service in self.services])
+
 
 class AppointmentOption(models.Model):
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='appointment_options')
+        Appointment, on_delete=models.CASCADE,
+        related_name='appointment_options')
     option = models.ForeignKey(
-        Option, on_delete=models.CASCADE, related_name='option_appointments')
+        Option, on_delete=models.CASCADE)
 
 
 class TimeSlot(models.Model):

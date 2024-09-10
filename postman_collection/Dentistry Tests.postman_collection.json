@@ -7,136 +7,540 @@
 	},
 	"item": [
 		{
-			"name": "get_avaliable_days",
-			"event": [
+			"name": "Get info",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"const responseData = pm.response.json();",
-							"const responseSchema = {",
-							"    \"days\": {",
-							"        \"type\": \"array\",",
-							"        \"items\": {",
-							"            \"type\": \"object\",",
-							"            \"properties\": {",
-							"                \"date\": {\"type\": \"string\"},",
-							"                \"is_free\": {\"type\": \"boolean\"}",
-							"            },",
-							"            \"required\": [\"date\", \"is_free\"],",
-							"            \"additionalProperties\": false",
-							"        }",
-							"    }",
-							"}",
-							"",
-							"pm.test(\"Статус-код ответа должен быть 200\", function () {",
-							"    pm.expect(",
-							"        pm.response.status,",
-							"        \"сообщение\"",
-							"    ).to.be.eql('OK');",
-							"});",
-							"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
-							"    pm.response.to.have.jsonSchema(responseSchema);",
-							"});",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "127.0.0.1:8000/api/v1/get-available-days?period=3&services=1&doctors=1",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"get-available-days"
-					],
-					"query": [
+					"name": "get_avaliable_days",
+					"event": [
 						{
-							"key": "period",
-							"value": "3"
-						},
-						{
-							"key": "services",
-							"value": "1"
-						},
-						{
-							"key": "doctors",
-							"value": "1"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"const responseSchema = {",
+									"    \"days\": {",
+									"        \"type\": \"array\",",
+									"        \"items\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"date\": {\"type\": \"string\"},",
+									"                \"is_free\": {\"type\": \"boolean\"}",
+									"            },",
+									"            \"required\": [\"date\", \"is_free\"],",
+									"            \"additionalProperties\": false",
+									"        }",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"сообщение\"",
+									"    ).to.be.eql('OK');",
+									"});",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_ip}}/api/v1/get-available-days?period=3&services={{nerve_removal_id}}&doctors={{doc_ter_1_id}}",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"get-available-days"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "3",
+									"description": "default=7"
+								},
+								{
+									"key": "services",
+									"value": "{{nerve_removal_id}}",
+									"description": "* example: \"1, 2, 3\""
+								},
+								{
+									"key": "doctors",
+									"value": "{{doc_ter_1_id}}",
+									"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_avaliable_timeslots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local_ip}}/api/v1/get-available-timeslots?date={{today}}&services={{consultation_ter_id}}&doctor={{doc_ter_1_id}}",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"get-available-timeslots"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{today}}",
+									"description": "default=today"
+								},
+								{
+									"key": "services",
+									"value": "{{consultation_ter_id}}",
+									"description": "* example: \"1, 2, 3\""
+								},
+								{
+									"key": "doctor",
+									"value": "{{doc_ter_1_id}}",
+									"description": "* example: \"1, 2, 3\""
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "get_avaliable_timeslots",
-			"event": [
+			"name": "CRUD for appointments",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "127.0.0.1:8000/api/v1/get-available-timeslots?date=2024-09-06&services=1&doctor=1",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"get-available-timeslots"
-					],
-					"query": [
+					"name": "create_app_1 //",
+					"event": [
 						{
-							"key": "date",
-							"value": "2024-09-06"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"const responseSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"id\": {\"type\": \"number\"},",
+									"        \"patient\": {\"type\": \"number\"},",
+									"        \"doctor\": {\"type\": \"number\"},",
+									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"        \"min_price\": {\"type\": \"number\"},",
+									"        \"max_price\": {\"type\": \"number\"},",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"timeslots\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"                    \"start_time\": {\"type\": \"string\", \"format\": \"time\"}",
+									"                },",
+									"                \"required\": [\"date\", \"start_time\"],",
+									"                \"additionalProperties\": false",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"min_price\", \"max_price\", \"services\", \"timeslots\"],",
+									"    \"additionalProperties\": false",
+									"};",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 201\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь отправляет POST-запрос с корректными данными для записи на прием - должен вернуться ответ с кодом 201\"",
+									"    ).to.be.eql(\"Created\");",
+									"",
+									"    const appointmentId = _.get(responseData, \"id\");",
+									"    if (appointmentId) {",
+									"        pm.collectionVariables.set(\"appointment_id_1\", appointmentId);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						},
 						{
-							"key": "services",
-							"value": "1"
-						},
-						{
-							"key": "doctor",
-							"value": "1"
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Создаем объект текущей даты",
+									"const today = new Date();",
+									"",
+									"// Функция для форматирования даты в формат YYYY-MM-DD",
+									"function formatDate(date) {",
+									"    const year = date.getFullYear();",
+									"    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11, поэтому +1",
+									"    const day = String(date.getDate()).padStart(2, '0');",
+									"    return `${year}-${month}-${day}`;",
+									"}",
+									"",
+									"// Сегодняшняя дата",
+									"const todayFormatted = formatDate(today);",
+									"pm.collectionVariables.set(\"today\", todayFormatted);",
+									"",
+									"// Завтрашняя дата",
+									"const tomorrow = new Date(today);",
+									"tomorrow.setDate(today.getDate() + 1);",
+									"const tomorrowFormatted = formatDate(tomorrow);",
+									"pm.collectionVariables.set(\"tomorrow\", tomorrowFormatted);",
+									"",
+									"// Послезавтрашняя дата",
+									"const dayAfterTomorrow = new Date(today);",
+									"dayAfterTomorrow.setDate(today.getDate() + 2);",
+									"const dayAfterTomorrowFormatted = formatDate(dayAfterTomorrow);",
+									"pm.collectionVariables.set(\"day_after_tomorrow\", dayAfterTomorrowFormatted);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local_ip}}/api/v1/appointments/",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_app_1 //",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    // \"timeslots\":[\"13:00:00\", \"13:30:00\", \"14:00:00\"],\n    \"options\": [{{consultation_basic_id}}, {{caries_hard_id}}],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doct_ter_2_id}},\n    \"date\" : \"{{today}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local_ip}}/api/v1/appointments/{{appointment_id_1}}/",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{appointment_id_1}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_app_1 //",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local_ip}}/api/v1/appointments/{{appointment_id_1}}/",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{appointment_id_1}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_2 //",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"const responseSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"id\": {\"type\": \"number\"},",
+									"        \"patient\": {\"type\": \"number\"},",
+									"        \"doctor\": {\"type\": \"number\"},",
+									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"        \"min_price\": {\"type\": \"number\"},",
+									"        \"max_price\": {\"type\": \"number\"},",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"timeslots\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"                    \"start_time\": {\"type\": \"string\", \"format\": \"time\"}",
+									"                },",
+									"                \"required\": [\"date\", \"start_time\"],",
+									"                \"additionalProperties\": false",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"min_price\", \"max_price\", \"services\", \"timeslots\"],",
+									"    \"additionalProperties\": false",
+									"};",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 201\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь отправляет POST-запрос с корректными данными для записи на прием - должен вернуться ответ с кодом 201\"",
+									"    ).to.be.eql(\"Created\");",
+									"",
+									"    const appointmentId = _.get(responseData, \"id\");",
+									"    if (appointmentId) {",
+									"        pm.collectionVariables.set(\"appointmentId1\", appointmentId);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\",\"11:30:00\", \"12:30:00\", \"11:00:00\"],\n    \"patient\": 1,\n    \"doctor\": {{doct_ter_2_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local_ip}}/api/v1/appointments/",
+							"host": [
+								"{{local_ip}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_3 // consultaion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"11:30:00\"],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\": \"2024-09-07\",\n    \"services\": [3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_4 // consultaion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"11:30:00\"],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\": \"2024-09-07\",\n    \"services\": [3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_in_doctor_busy_time",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"11:30:00\", \"12:00:00\"],\n    \"options\": [1],\n    \"patient\": 2,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_in_doctor_not_working_slots",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"11:30:00\", \"12:00:00\"],\n    \"options\": [1],\n    \"patient\": 2,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "create_appointment",
+			"name": "get_app_list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\"],\n    \"options\": [1],\n    \"patient\": 1,\n    \"doctor\": 1,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
+					"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\"],\n    \"options\": [1],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -144,40 +548,129 @@
 					}
 				},
 				"url": {
-					"raw": "127.0.0.1:8000/api/v1/appointments/",
+					"raw": "{{local_ip}}/api/v1/appointments/",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{local_ip}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"v1",
 						"appointments",
 						""
-					],
-					"query": [
-						{
-							"key": "date",
-							"value": "2024-08-20",
-							"disabled": true
-						},
-						{
-							"key": "services",
-							"value": "1",
-							"disabled": true
-						},
-						{
-							"key": "doctor",
-							"value": "1",
-							"disabled": true
-						}
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "today",
+			"value": ""
+		},
+		{
+			"key": "local_ip",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tomorrow",
+			"value": ""
+		},
+		{
+			"key": "day_after_tomorrow",
+			"value": ""
+		},
+		{
+			"key": "appointment_id_1",
+			"value": ""
+		},
+		{
+			"key": "doc_ter_1_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doct_ter_2_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "caries_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "caries_light_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "caries_medium_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "caries_hard_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nerve_removal_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nerve_light_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nerve_medium_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nerve_hard_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "consultation_ter_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "consultation_basic_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_1_id",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

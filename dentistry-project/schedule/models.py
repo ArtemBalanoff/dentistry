@@ -75,7 +75,7 @@ class DoctorSchedule(models.Model):
             name='weekday_doctor_unique'
         )]
         verbose_name = 'расписание дня доктора'
-        verbose_name_plural = 'Расписание доктора'
+        verbose_name_plural = 'Расписание докторов'
         ordering = ('doctor', 'weekday')
 
     def __str__(self):
@@ -83,9 +83,10 @@ class DoctorSchedule(models.Model):
 
     def clean(self):
         from .validators import (
-            start_end_time_validator, compare_doctor_schedule_to_base)
-        start_end_time_validator(self)
-        compare_doctor_schedule_to_base(self)
+            start_end_time_validator, compare_doctors_schedule_to_base)
+        if self.is_working:
+            start_end_time_validator(self)
+            compare_doctors_schedule_to_base(self)
 
     def save(self, *args, **kwargs):
         self.clean()

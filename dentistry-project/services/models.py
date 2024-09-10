@@ -21,7 +21,6 @@ class Service(models.Model):
         related_name='services',
         on_delete=models.CASCADE,
     )
-    # slug = models.SlugField('Слаг')
 
     class Meta:
         verbose_name = 'услуга'
@@ -31,6 +30,14 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def min_price(self):
+        return self.options.first().price
+
+    @property
+    def max_price(self):
+        return self.options.last().price
+
 
 class Option(models.Model):
     name = models.CharField(
@@ -38,7 +45,7 @@ class Option(models.Model):
     )
     price = models.IntegerField('Цена')
     service = models.ForeignKey(Service, on_delete=models.CASCADE,
-                                related_name='options')
+                                related_name='options', verbose_name='Услуга')
 
     class Meta:
         verbose_name = 'опция услуги'

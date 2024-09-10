@@ -1,20 +1,28 @@
 import datetime as dt
 from http import HTTPStatus
-from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import viewsets
 from .models import Appointment
 from .serializers import (
-    AppointmentSerializer, AvailableTimeSlotsSerializer,
-    AvailableDaysSerializer
+    AppointmentCloseSerializer, AppointmentSerializer,
+    AvailableTimeSlotsSerializer, AvailableDaysSerializer
 )
-# from .mixins import ListViewSet
-from rest_framework.request import Request
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+
+    @action(('PATCH',), detail=True)
+    def close(self, request: Request, pk: int):
+        instance = get_object_or_404(Appointment, pk=pk)
+        serializer = AppointmentCloseSerializer(instance=instance, data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
 
 
 # class TimeSlotViewSet(ListViewSet):

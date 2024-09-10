@@ -45,7 +45,7 @@ class DoctorAdmin(admin.ModelAdmin):
 
     @admin.display(description='Стаж')
     def get_doctor_stage(self, obj):
-        return obj.doctor_profile.stage
+        return f'{obj.doctor_profile.stage} лет (год(а))'
 
     @admin.display(description='Номер телефона')
     def get_phone_number(self, obj):

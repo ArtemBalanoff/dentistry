@@ -1,3 +1,5 @@
+set -e
+
 case "$OSTYPE" in
     msys*)    python=python ;;
     cygwin*)  python=python ;;
