@@ -67,7 +67,7 @@ class DoctorSchedule(models.Model):
                                   null=True, blank=True)
     end_time = models.TimeField('Конец рабочего дня', choices=HOUR_CHOICES,
                                 null=True, blank=True)
-    is_working = models.BooleanField(default=False)
+    is_working = models.BooleanField('Работает', default=False)
 
     class Meta:
         constraints = [models.UniqueConstraint(

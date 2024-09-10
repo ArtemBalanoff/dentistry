@@ -22,7 +22,7 @@ from .utils import check_doctor_working_day, get_timeslots_list
 class TimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeSlot
-        fields = ('date', 'start_time')
+        fields = ('start_time',)
 
 
 class AvailableTimeSlotsSerializer(serializers.Serializer):
@@ -116,10 +116,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         date: Opt[dt.date] = data.get('date')
         doctor: Opt[DoctorProfile] = data.get('doctor')
         services: Opt[list[Service]] = data.get('services')
-        timeslots_freedom_validator(doctor, timeslots, date)
+        timeslots_freedom_validator(doctor, timeslots, date, self.instance)
         timeslots_correct_duration_validator(timeslots, services)
         doctor_schedule_freedom_validator(timeslots, doctor, date)
-        doctor_exc_schedule_freedom_validator(timeslots, doctor, date)
+        doctor_exc_schedule_freedom_validator(doctor, date)
         doctor_spec_correspondence_to_services(doctor, services)
         return data
         # if not services:  # То есть, action == 'update'
@@ -173,9 +173,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         repr_dict['min_price'] = instance.min_price
         repr_dict['max_price'] = instance.max_price
         repr_dict['services'] = map(lambda x: x.id, instance.services)
-        timeslots: list = []
-        for timeslot in instance.timeslots.all():
-            timeslots.append(TimeSlotSerializer(timeslot).data)
+        timeslots = instance.timeslots.values_list('start_time', flat=True)
+        # timeslots: list = []
+        # for timeslot in instance.timeslots.all():
+        #     timeslots.append(TimeSlotSerializer(timeslot).data)
         repr_dict['timeslots'] = timeslots
         return repr_dict
 
@@ -202,4 +203,6 @@ class AppointmentCloseSerializer(AppointmentSerializer):
         repr_dict = super(serializers.ModelSerializer, self).to_representation(instance)
         repr_dict['services'] = map(lambda x: x.id, instance.services)
         repr_dict['price'] = instance.price
+        timeslots = instance.timeslots.values_list('start_time', flat=True)
+        repr_dict['timeslots'] = timeslots
         return repr_dict

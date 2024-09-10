@@ -10,6 +10,141 @@
 			"name": "Get info",
 			"item": [
 				{
+					"name": "Appointments",
+					"item": [
+						{
+							"name": "get_app_list",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/appointments/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"appointments",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_app_detail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/appointments/{{appointment_id_1}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"appointments",
+										"{{appointment_id_1}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Doctors",
+					"item": [
+						{
+							"name": "get_doc_list",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/doctors/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"doctors",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_doc_detail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/doctors/{{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"doctors",
+										"{{doc_ter_1_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Patients",
+					"item": [
+						{
+							"name": "get_pat_list",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{local_ip}}/api/v1/patients/",
+									"host": [
+										"{{local_ip}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"patients",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_pat_detail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{local_ip}}/api/v1/patients/",
+									"host": [
+										"{{local_ip}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"patients",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "get_avaliable_days",
 					"event": [
 						{
@@ -52,9 +187,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{local_ip}}/api/v1/get-available-days?period=3&services={{nerve_removal_id}}&doctors={{doc_ter_1_id}}",
+							"raw": "{{host}}/api/v1/get-available-days?services={{caries_id}}",
 							"host": [
-								"{{local_ip}}"
+								"{{host}}"
 							],
 							"path": [
 								"api",
@@ -65,17 +200,19 @@
 								{
 									"key": "period",
 									"value": "3",
-									"description": "default=7"
+									"description": "default=7",
+									"disabled": true
 								},
 								{
 									"key": "services",
-									"value": "{{nerve_removal_id}}",
+									"value": "{{caries_id}}",
 									"description": "* example: \"1, 2, 3\""
 								},
 								{
 									"key": "doctors",
 									"value": "{{doc_ter_1_id}}",
-									"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\""
+									"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\"",
+									"disabled": true
 								}
 							]
 						}
@@ -100,9 +237,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{local_ip}}/api/v1/get-available-timeslots?date={{today}}&services={{consultation_ter_id}}&doctor={{doc_ter_1_id}}",
+							"raw": "{{host}}/api/v1/get-available-timeslots?date={{tomorrow}}&services={{consultation_ter_id}}&doctor={{doc_ter_1_id}}",
 							"host": [
-								"{{local_ip}}"
+								"{{host}}"
 							],
 							"path": [
 								"api",
@@ -112,7 +249,7 @@
 							"query": [
 								{
 									"key": "date",
-									"value": "{{today}}",
+									"value": "{{tomorrow}}",
 									"description": "default=today"
 								},
 								{
@@ -143,6 +280,7 @@
 							"script": {
 								"exec": [
 									"const responseData = pm.response.json();",
+									"",
 									"const responseSchema = {",
 									"    \"type\": \"object\",",
 									"    \"properties\": {",
@@ -159,13 +297,335 @@
 									"        \"timeslots\": {",
 									"            \"type\": \"array\",",
 									"            \"items\": {",
-									"                \"type\": \"object\",",
-									"                \"properties\": {",
-									"                    \"date\": {\"type\": \"string\", \"format\": \"date\"},",
-									"                    \"start_time\": {\"type\": \"string\", \"format\": \"time\"}",
-									"                },",
-									"                \"required\": [\"date\", \"start_time\"],",
-									"                \"additionalProperties\": false",
+									"                \"type\": \"string\",",
+									"                \"format\": \"time\"",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"min_price\", \"max_price\", \"services\", \"timeslots\"],",
+									"    \"additionalProperties\": false",
+									"};",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 201\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь отправляет POST-запрос с корректными данными для записи на прием - должен вернуться ответ с кодом 201\"",
+									"    ).to.be.eql(\"Created\");",
+									"",
+									"    const appointmentId = _.get(responseData, \"id\");",
+									"    if (appointmentId) {",
+									"        pm.collectionVariables.set(\"appointment_id_1\", appointmentId);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Создаем объект текущей даты",
+									"const today = new Date();",
+									"",
+									"// Функция для форматирования даты в формат YYYY-MM-DD",
+									"function formatDate(date) {",
+									"    const year = date.getFullYear();",
+									"    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11, поэтому +1",
+									"    const day = String(date.getDate()).padStart(2, '0');",
+									"    return `${year}-${month}-${day}`;",
+									"}",
+									"",
+									"// Сегодняшняя дата",
+									"const todayFormatted = formatDate(today);",
+									"pm.collectionVariables.set(\"today\", todayFormatted);",
+									"",
+									"// Завтрашняя дата",
+									"const tomorrow = new Date(today);",
+									"tomorrow.setDate(today.getDate() + 1);",
+									"const tomorrowFormatted = formatDate(tomorrow);",
+									"pm.collectionVariables.set(\"tomorrow\", tomorrowFormatted);",
+									"",
+									"// Послезавтрашняя дата",
+									"const dayAfterTomorrow = new Date(today);",
+									"dayAfterTomorrow.setDate(today.getDate() + 2);",
+									"const dayAfterTomorrowFormatted = formatDate(dayAfterTomorrow);",
+									"pm.collectionVariables.set(\"day_after_tomorrow\", dayAfterTomorrowFormatted);",
+									"",
+									"// Послезавтрашняя дата",
+									"const day_4 = new Date(today);",
+									"day_4.setDate(today.getDate() + 3);",
+									"const day_4Formatted = formatDate(day_4);",
+									"pm.collectionVariables.set(\"day_4\", day_4Formatted);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_app_1 //",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"",
+									"const responseSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"id\": {\"type\": \"number\"},",
+									"        \"patient\": {\"type\": \"number\"},",
+									"        \"doctor\": {\"type\": \"number\"},",
+									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"        \"min_price\": {\"type\": \"number\"},",
+									"        \"max_price\": {\"type\": \"number\"},",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"timeslots\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"string\",",
+									"                \"format\": \"time\"",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"min_price\", \"max_price\", \"services\", \"timeslots\"],",
+									"    \"additionalProperties\": false",
+									"};",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь отправляет POST-запрос с корректными данными для записи на прием - должен вернуться ответ с кодом 201\"",
+									"    ).to.be.eql(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_2_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/{{appointment_id_1}}/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{appointment_id_1}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "close_app_1 //",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"",
+									"const responseSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"id\": {\"type\": \"number\"},",
+									"        \"patient\": {\"type\": \"number\"},",
+									"        \"doctor\": {\"type\": \"number\"},",
+									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"        \"timeslots\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"string\", \"format\": \"time\"}",
+									"        },",
+									"        \"options\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"price\": {\"type\": \"number\"}",
+									"    },",
+									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"timeslots\", \"options\", \"services\", \"price\"],",
+									"    \"additionalProperties\": false",
+									"};",
+									"",
+									"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь запрашивает данные о записи на прием - должен вернуться ответ с кодом 200\"",
+									"    ).to.be.eql(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"options\": [{{consultation_basic_id}}, {{caries_hard_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/{{appointment_id_1}}/close/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{appointment_id_1}}",
+								"close",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_app_1 //",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 204\", function () {",
+									"    pm.expect(",
+									"        pm.response.status,",
+									"        \"Когда пользователь запрашивает данные о записи на прием - должен вернуться ответ с кодом 204\"",
+									"    ).to.be.eql(\"No Content\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/{{appointment_id_1}}/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{appointment_id_1}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing Validation",
+			"item": [
+				{
+					"name": "create_app_2 //",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();",
+									"",
+									"const responseSchema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"id\": {\"type\": \"number\"},",
+									"        \"patient\": {\"type\": \"number\"},",
+									"        \"doctor\": {\"type\": \"number\"},",
+									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
+									"        \"min_price\": {\"type\": \"number\"},",
+									"        \"max_price\": {\"type\": \"number\"},",
+									"        \"services\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {\"type\": \"number\"}",
+									"        },",
+									"        \"timeslots\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"string\",",
+									"                \"format\": \"time\"",
 									"            }",
 									"        }",
 									"    },",
@@ -236,7 +696,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"raw": "{\n    \"timeslots\":[\"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -244,9 +704,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{local_ip}}/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"{{local_ip}}"
+								"{{host}}"
 							],
 							"path": [
 								"api",
@@ -259,108 +719,19 @@
 					"response": []
 				},
 				{
-					"name": "update_app_1 //",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    // \"timeslots\":[\"13:00:00\", \"13:30:00\", \"14:00:00\"],\n    \"options\": [{{consultation_basic_id}}, {{caries_hard_id}}],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doct_ter_2_id}},\n    \"date\" : \"{{today}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{local_ip}}/api/v1/appointments/{{appointment_id_1}}/",
-							"host": [
-								"{{local_ip}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"appointments",
-								"{{appointment_id_1}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete_app_1 //",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{local_ip}}/api/v1/appointments/{{appointment_id_1}}/",
-							"host": [
-								"{{local_ip}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"appointments",
-								"{{appointment_id_1}}",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create_app_2 //",
+					"name": "create_app_1 // too much timeslots",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const responseData = pm.response.json();",
-									"const responseSchema = {",
-									"    \"type\": \"object\",",
-									"    \"properties\": {",
-									"        \"id\": {\"type\": \"number\"},",
-									"        \"patient\": {\"type\": \"number\"},",
-									"        \"doctor\": {\"type\": \"number\"},",
-									"        \"date\": {\"type\": \"string\", \"format\": \"date\"},",
-									"        \"min_price\": {\"type\": \"number\"},",
-									"        \"max_price\": {\"type\": \"number\"},",
-									"        \"services\": {",
-									"            \"type\": \"array\",",
-									"            \"items\": {\"type\": \"number\"}",
-									"        },",
-									"        \"timeslots\": {",
-									"            \"type\": \"array\",",
-									"            \"items\": {",
-									"                \"type\": \"object\",",
-									"                \"properties\": {",
-									"                    \"date\": {\"type\": \"string\", \"format\": \"date\"},",
-									"                    \"start_time\": {\"type\": \"string\", \"format\": \"time\"}",
-									"                },",
-									"                \"required\": [\"date\", \"start_time\"],",
-									"                \"additionalProperties\": false",
-									"            }",
-									"        }",
-									"    },",
-									"    \"required\": [\"id\", \"patient\", \"doctor\", \"date\", \"min_price\", \"max_price\", \"services\", \"timeslots\"],",
-									"    \"additionalProperties\": false",
-									"};",
-									"",
-									"pm.test(\"Статус-код ответа должен быть 201\", function () {",
-									"    pm.expect(",
-									"        pm.response.status,",
-									"        \"Когда пользователь отправляет POST-запрос с корректными данными для записи на прием - должен вернуться ответ с кодом 201\"",
-									"    ).to.be.eql(\"Created\");",
-									"",
-									"    const appointmentId = _.get(responseData, \"id\");",
-									"    if (appointmentId) {",
-									"        pm.collectionVariables.set(\"appointmentId1\", appointmentId);",
-									"    }",
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
 									"});",
 									"",
-									"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
-									"    pm.response.to.have.jsonSchema(responseSchema);",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
 									"});",
 									""
 								],
@@ -374,7 +745,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"12:00:00\",\"11:30:00\", \"12:30:00\", \"11:00:00\"],\n    \"patient\": 1,\n    \"doctor\": {{doct_ter_2_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}]\n}",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\", \"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -382,9 +753,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{local_ip}}/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"{{local_ip}}"
+								"{{host}}"
 							],
 							"path": [
 								"api",
@@ -397,13 +768,33 @@
 					"response": []
 				},
 				{
-					"name": "create_app_3 // consultaion",
+					"name": "create_app_1 // not enough timeslots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"11:30:00\"],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\": \"2024-09-07\",\n    \"services\": [3]\n}",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -411,14 +802,10 @@
 							}
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8000",
 							"path": [
 								"api",
 								"v1",
@@ -430,13 +817,33 @@
 					"response": []
 				},
 				{
-					"name": "create_app_4 // consultaion",
+					"name": "create_app_1 // inconsistent timeslots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'timeslots'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('timeslots');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"11:30:00\"],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\": \"2024-09-07\",\n    \"services\": [3]\n}",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -444,14 +851,10 @@
 							}
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8000",
 							"path": [
 								"api",
 								"v1",
@@ -463,13 +866,33 @@
 					"response": []
 				},
 				{
-					"name": "create_app_in_doctor_busy_time",
+					"name": "create_app_1 // busy timeslots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"11:30:00\", \"12:00:00\"],\n    \"options\": [1],\n    \"patient\": 2,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
+							"raw": "{\n    \"timeslots\":[\"12:30:00\", \"13:00:00\",\"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -477,14 +900,10 @@
 							}
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8000",
 							"path": [
 								"api",
 								"v1",
@@ -496,13 +915,33 @@
 					"response": []
 				},
 				{
-					"name": "create_app_in_doctor_not_working_slots",
+					"name": "create_app_1 // doc not working day",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"timeslots\":[\"11:30:00\", \"12:00:00\"],\n    \"options\": [1],\n    \"patient\": 2,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
+							"raw": "{\n    \"timeslots\":[\"12:30:00\", \"13:00:00\",\"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{day_after_tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -510,14 +949,206 @@
 							}
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/v1/appointments/",
+							"raw": "{{host}}/api/v1/appointments/",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_1 // doc not working time",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"10:00:00\", \"10:30:00\",\"11:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_1 // services from diff specs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'services'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('services');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"10:00:00\", \"10:30:00\",\"11:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{tomorrow}}\",\n    \"services\": [{{caries_id}}, {{tooth_removal_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_1 // doc day exception",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('non_field_errors');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_2_id}},\n    \"date\": \"{{day_after_tomorrow}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_app_1 // clinic day exception",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'date'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('date');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\", \"13:00:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_2_id}},\n    \"date\": \"{{day_4}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
 							"path": [
 								"api",
 								"v1",
@@ -529,38 +1160,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "get_app_list",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"timeslots\":[\"12:00:00\", \"12:30:00\"],\n    \"options\": [1],\n    \"patient\": 1,\n    \"doctor\": 2,\n    \"date\" : \"2024-09-06\",\n    \"services\": [1]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{local_ip}}/api/v1/appointments/",
-					"host": [
-						"{{local_ip}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"appointments",
-						""
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"event": [
@@ -591,7 +1190,7 @@
 			"value": ""
 		},
 		{
-			"key": "local_ip",
+			"key": "host",
 			"value": "",
 			"type": "string"
 		},
@@ -613,7 +1212,7 @@
 			"type": "string"
 		},
 		{
-			"key": "doct_ter_2_id",
+			"key": "doc_ter_2_id",
 			"value": "",
 			"type": "string"
 		},
@@ -671,6 +1270,19 @@
 			"key": "patient_1_id",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "appointmentId1",
+			"value": ""
+		},
+		{
+			"key": "tooth_removal_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "day_4",
+			"value": ""
 		}
 	]
 }

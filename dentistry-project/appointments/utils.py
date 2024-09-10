@@ -10,7 +10,7 @@ from rest_framework.serializers import ValidationError
 
 
 def get_timeslots_list(doctor: DoctorProfile, date, doctor_schedule) -> list[dict]:
-    '''Возвращает список слотов, доступных по расписанию, указывая, какие из них свободны'''
+    """Возвращает список слотов, доступных по расписанию, указывая, какие из них свободны"""
     busy_timeslots: QuerySet = doctor.timeslots.filter(date=date)
     busy_timeslots_values = busy_timeslots.values_list('start_time', flat=True)
     timeslots = []
@@ -30,12 +30,12 @@ def get_timeslots_list(doctor: DoctorProfile, date, doctor_schedule) -> list[dic
 
 
 def time_add_timedelta(time: time, timedelta: timedelta) -> dt.time:
-    '''Складывает time и timedelta'''
+    """Складывает time и timedelta"""
     return (datetime.combine(datetime.today(), time) + timedelta).time()
 
 
 def get_necessary_timeslots_count_from_services(services: Service) -> int:
-    '''Возвращает необходимое кол-во слотов для списка услуг'''
+    """Возвращает необходимое кол-во слотов для списка услуг"""
     services_durations = [service.duration for service in services]
     return sum(services_durations) // SLOT_DURATION
 
@@ -44,8 +44,8 @@ def check_doctor_working_day(
         date: dt.date,
         doctor: DoctorProfile,
         services: Service) -> None:
-    '''Валидатор, который выбрасывает ошибку, если доктор в выбранный день не может
-    по каким-либо причинам оказать все выбранные услуги за один прием'''
+    """Валидатор, который выбрасывает ошибку, если доктор в выбранный день не может
+    по каким-либо причинам оказать все выбранные услуги за один прием"""
     weekday: int = date.weekday()
     doctor_schedule: DoctorSchedule = doctor.schedule.filter(
         weekday=weekday).first()

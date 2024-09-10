@@ -58,7 +58,7 @@ class DoctorAdmin(admin.ModelAdmin):
             obj.delete()
             self.message_user(
                 request,
-                'Доктор не был создан. Пожалуйста, заполните все поля профиля доктора',
+                'Доктор не был создан. Пожалуйста, заполните профиль доктора',
                 level=messages.ERROR)
 
 
