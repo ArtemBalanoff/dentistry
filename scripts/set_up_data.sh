@@ -6,6 +6,7 @@ case "$OSTYPE" in
     *)        python=python3 ;;
 esac
 
+source venv/bin/activate
 cd dentistry-project/
 $python manage.py migrate
 $python manage.py flush --no-input

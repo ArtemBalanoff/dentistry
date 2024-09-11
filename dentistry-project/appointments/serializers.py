@@ -11,6 +11,7 @@ from .validators import (
     doctor_exc_schedule_freedom_validator,
     doctor_schedule_freedom_validator,
     doctor_spec_correspondence_to_services,
+    doctors_validator,
     options_relate_to_same_services,
     services_validator,
     timeslots_correct_duration_validator,
@@ -39,6 +40,8 @@ class AvailableTimeSlotsSerializer(serializers.Serializer):
         return services_validator(services)
 
     def validate(self, data):
+        doctor_spec_correspondence_to_services(data.get('doctor'),
+                                               data.get('services'))
         check_doctor_working_day(data.get('date'),
                                  data.get('doctor'),
                                  data.get('services'))
@@ -61,14 +64,20 @@ class AvailableDaysSerializer(serializers.Serializer):
         queryset=Service.objects.all(), slug_field='id', many=True)
     period = serializers.IntegerField()
 
-    def validate_services(self, services):
+    def validate_services(self, services: list[Service]):
         return services_validator(services)
 
-    def validate(self, data):
+    def validate_doctors(self, doctors: list[DoctorProfile]):
+        return doctors_validator(doctors)
+
+    def validate(self, data: dict[str, Any]):
         doctors = data.get('doctors')
         services = data.get('services')
         if not doctors:
             data['doctors'] = services[0].specialization.doctors.all()
+            return data
+        for doctor in doctors:
+            doctor_spec_correspondence_to_services(doctor, services)
         return data
 
     def to_representation(self, instance: Any):
@@ -78,7 +87,8 @@ class AvailableDaysSerializer(serializers.Serializer):
         services: Opt[list[Service]] = data.get('services')
         today = dt.date.today()
         dates = [today + timedelta(days=day_idx) for day_idx in range(period)]
-        days_dict = [{'date': date, 'is_free': False, 'doctors': []} for date in dates]
+        days_dict = [{'date': date, 'is_free': False, 'doctors': []}
+                     for date in dates]
         for doctor in doctors:
             for day_idx in range(len(dates)):
                 try:
@@ -122,10 +132,6 @@ class AppointmentSerializer(serializers.ModelSerializer):
         doctor_exc_schedule_freedom_validator(doctor, date)
         doctor_spec_correspondence_to_services(doctor, services)
         return data
-        # if not services:  # То есть, action == 'update'
-        #     options: Opt[list[Service]] = data.get('options')
-        #     services = [option.service for option in options]
-        #     options_relate_to_same_services(self.instance, options)
 
     def create(self, validated_data: dict):
         validated_data.get('services')
@@ -173,11 +179,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
         repr_dict['min_price'] = instance.min_price
         repr_dict['max_price'] = instance.max_price
         repr_dict['services'] = map(lambda x: x.id, instance.services)
-        timeslots = instance.timeslots.values_list('start_time', flat=True)
-        # timeslots: list = []
-        # for timeslot in instance.timeslots.all():
-        #     timeslots.append(TimeSlotSerializer(timeslot).data)
-        repr_dict['timeslots'] = timeslots
+        repr_dict['timeslots'] = instance.timeslots.values_list('start_time',
+                                                                flat=True)
         return repr_dict
 
 
@@ -200,9 +203,10 @@ class AppointmentCloseSerializer(AppointmentSerializer):
         return data
 
     def to_representation(self, instance: Appointment):
-        repr_dict = super(serializers.ModelSerializer, self).to_representation(instance)
+        repr_dict = super(serializers.ModelSerializer, self
+                          ).to_representation(instance)
         repr_dict['services'] = map(lambda x: x.id, instance.services)
         repr_dict['price'] = instance.price
-        timeslots = instance.timeslots.values_list('start_time', flat=True)
-        repr_dict['timeslots'] = timeslots
+        repr_dict['timeslots'] = instance.timeslots.values_list('start_time',
+                                                                flat=True)
         return repr_dict

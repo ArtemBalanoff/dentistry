@@ -19,7 +19,8 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     @action(('PATCH',), detail=True)
     def close(self, request: Request, pk: int):
         instance = get_object_or_404(Appointment, pk=pk)
-        serializer = AppointmentCloseSerializer(instance=instance, data=request.data)
+        serializer = AppointmentCloseSerializer(instance=instance,
+                                                data=request.data)
         if serializer.is_valid():
             return Response(serializer.data)
         return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)

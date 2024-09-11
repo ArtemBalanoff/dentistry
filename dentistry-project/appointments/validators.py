@@ -4,13 +4,16 @@ from schedule.models import BaseSchedule, DoctorSchedule, ExceptionCase
 from rest_framework.serializers import ValidationError
 from services.models import Service
 from appointments.models import Appointment, TimeSlot
-from .utils import get_necessary_timeslots_count_from_services, time_add_timedelta
+from .utils import (
+    get_necessary_timeslots_count_from_services, time_add_timedelta)
 from dentistry.constants import SLOT_DURATION
 from users.models import DoctorProfile
 
 
 def date_validator(date: dt.date) -> dt.date:
-    """Проверка даты на доступность по базовому расписанию клиники и внеплановому."""
+    """
+    Проверка даты на доступность по базовому расписанию клиники и внеплановому.
+    """
     if not BaseSchedule.objects.get(weekday=date.weekday()).is_open:
         raise ValidationError(
             'В этот день стоматология не работает.'
@@ -26,7 +29,9 @@ def date_validator(date: dt.date) -> dt.date:
 
 
 def services_validator(services: list[Service]) -> list[Service]:
-    """Проверка услуг на присутствие и принадлежность к одинаковой специальности."""
+    """
+    Проверка услуг на присутствие и принадлежность к одинаковой специальности.
+    """
     if not services:
         raise ValidationError(
             'Это поле не может быть пустым.'
@@ -43,7 +48,9 @@ def services_validator(services: list[Service]) -> list[Service]:
 
 
 def timeslots_validator(timeslots: list[dt.time]) -> list[dt.time]:
-    """Проверка временных слотов на последовательность."""
+    """
+    Проверка временных слотов на последовательность.
+    """
     timeslots.sort()
     end_time = None
     for time_slot in timeslots:
@@ -56,10 +63,24 @@ def timeslots_validator(timeslots: list[dt.time]) -> list[dt.time]:
     return timeslots
 
 
+def doctors_validator(doctors: list[DoctorProfile]):
+    """
+    Проверка на то, что все доктора относятся к одинаковой специальности.
+    """
+    doctors_specs = [doctor.specialization for doctor in doctors]
+    if len(set(doctors_specs)) > 1:
+        raise ValidationError(
+            'Все выбранные доктора должны относиться к одной специальности'
+        )
+    return doctors
+
+
 def timeslots_freedom_validator(
         doctor: DoctorProfile, timeslots: list[TimeSlot],
         date: dt.date, instance: Opt[Appointment]) -> None:
-    """Проверка, не заняты ли временные слоты."""
+    """
+    Проверка, не заняты ли временные слоты.
+    """
     occupied_slots = TimeSlot.objects.filter(
         date=date, doctor=doctor).exclude(appointment=instance)
     occupied_slots_start_times = occupied_slots.values_list(
@@ -73,7 +94,9 @@ def timeslots_freedom_validator(
 
 def timeslots_correct_duration_validator(
         timeslots: list[TimeSlot], services: list[Service]) -> None:
-    """Проверка на соответствие продолжительности услуг и слотов."""
+    """
+    Проверка на соответствие продолжительности услуг и слотов.
+    """
     nec_timeslots_count = get_necessary_timeslots_count_from_services(services)
     nec_timeslots_count_in_hours = nec_timeslots_count * SLOT_DURATION / 60
     if nec_timeslots_count > len(timeslots):
@@ -91,11 +114,14 @@ def timeslots_correct_duration_validator(
 def doctor_schedule_freedom_validator(
         timeslots: list[TimeSlot], doctor: DoctorProfile,
         date: dt.date) -> None:
-    """Проверка временных слотов на доступность по расписанию врача."""
+    """
+    Проверка временных слотов на доступность по расписанию врача.
+    """
     slots_start_time = timeslots[0]
     slots_end_time = time_add_timedelta(
         timeslots[-1], dt.timedelta(minutes=SLOT_DURATION))
-    doctor_schedule: DoctorSchedule = doctor.schedule.get(weekday=date.weekday())
+    doctor_schedule: DoctorSchedule = doctor.schedule.get(
+        weekday=date.weekday())
     if not doctor_schedule.is_working:
         raise ValidationError(
             'Доктор по расписанию не '
@@ -111,7 +137,8 @@ def doctor_schedule_freedom_validator(
 
 def doctor_exc_schedule_freedom_validator(doctor: DoctorProfile,
                                           date: dt.date) -> None:
-    """Проверка временных слотов на доступность
+    """
+    Проверка временных слотов на доступность
     по внеплановому расписанию врача.
     """
     exception_case = ExceptionCase.objects.filter(
@@ -125,7 +152,9 @@ def doctor_exc_schedule_freedom_validator(doctor: DoctorProfile,
 
 def doctor_spec_correspondence_to_services(
         doctor: DoctorProfile, services: list[Service]) -> None:
-    """Провека услуг на соответствие специальности доктора."""
+    """
+    Провека услуг на соответствие специальности доктора.
+    """
     if doctor.specialization != services[0].specialization:
         raise ValidationError(
             'Выбранные услуги оказывает врач другой специальности.'
@@ -133,7 +162,9 @@ def doctor_spec_correspondence_to_services(
 
 
 def options_relate_to_same_services(instance, new_options) -> None:
-    """Проверяет, соответствуют ли опции услугам, которые были до изменения"""
+    """
+    Проверяет, соответствуют ли опции услугам, которые были до изменения.
+    """
     options_services = {option.service for option in instance.options.all()}
     new_options_services = {option.service for option in new_options}
     if options_services != new_options_services:

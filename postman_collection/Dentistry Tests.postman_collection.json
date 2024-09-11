@@ -7,13 +7,66 @@
 	},
 	"item": [
 		{
-			"name": "Get info",
+			"name": "Get Requests",
 			"item": [
 				{
 					"name": "Appointments",
 					"item": [
 						{
 							"name": "get_app_list",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const today = new Date();",
+											"",
+											"function formatDate(date) {",
+											"    const year = date.getFullYear();",
+											"    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11, поэтому +1",
+											"    const day = String(date.getDate()).padStart(2, '0');",
+											"    return `${year}-${month}-${day}`;",
+											"}",
+											"",
+											"const todayFormatted = formatDate(today);",
+											"pm.collectionVariables.set(\"today\", todayFormatted);",
+											"",
+											"const tomorrow = new Date(today);",
+											"tomorrow.setDate(today.getDate() + 1);",
+											"const tomorrowFormatted = formatDate(tomorrow);",
+											"pm.collectionVariables.set(\"tomorrow\", tomorrowFormatted);",
+											"",
+											"const dayAfterTomorrow = new Date(today);",
+											"dayAfterTomorrow.setDate(today.getDate() + 2);",
+											"const dayAfterTomorrowFormatted = formatDate(dayAfterTomorrow);",
+											"pm.collectionVariables.set(\"day_after_tomorrow\", dayAfterTomorrowFormatted);",
+											"",
+											"const day_4 = new Date(today);",
+											"day_4.setDate(today.getDate() + 3);",
+											"const day_4_formatted = formatDate(day_4);",
+											"pm.collectionVariables.set(\"day_4\", day_4_formatted);",
+											"",
+											"const day_5 = new Date(today);",
+											"day_5.setDate(today.getDate() + 4);",
+											"const day_5_formatted = formatDate(day_5);",
+											"pm.collectionVariables.set(\"day_5\", day_5_formatted);",
+											"",
+											"const day_6 = new Date(today);",
+											"day_6.setDate(today.getDate() + 5);",
+											"const day_6_formatted = formatDate(day_6);",
+											"pm.collectionVariables.set(\"day_6\", day_6_formatted);",
+											"",
+											"const day_7 = new Date(today);",
+											"day_7.setDate(today.getDate() + 6);",
+											"const day_7_formatted = formatDate(day_7);",
+											"pm.collectionVariables.set(\"day_7\", day_7_formatted);",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -108,9 +161,9 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{local_ip}}/api/v1/patients/",
+									"raw": "{{host}}/api/v1/patients/",
 									"host": [
-										"{{local_ip}}"
+										"{{host}}"
 									],
 									"path": [
 										"api",
@@ -128,15 +181,105 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{local_ip}}/api/v1/patients/",
+									"raw": "{{host}}/api/v1/patients/",
 									"host": [
-										"{{local_ip}}"
+										"{{host}}"
 									],
 									"path": [
 										"api",
 										"v1",
 										"patients",
 										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Services",
+					"item": [
+						{
+							"name": "get_services_list",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/services/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_services_detail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/services/{{caries_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services",
+										"{{caries_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Specializations",
+					"item": [
+						{
+							"name": "get_spec_list",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/specializations/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"specializations",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_spec_detail",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/specializations/{{spec_sur}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"specializations",
+										"{{spec_sur}}"
 									]
 								}
 							},
@@ -270,7 +413,645 @@
 			]
 		},
 		{
-			"name": "CRUD for appointments",
+			"name": "Testing Get Validation",
+			"item": [
+				{
+					"name": "get_available_days",
+					"item": [
+						{
+							"name": "get_avaliable_days // no services",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'services'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('services');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-days",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-days"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "3",
+											"description": "default=7",
+											"disabled": true
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\"",
+											"disabled": true
+										},
+										{
+											"key": "doctors",
+											"value": "{{doc_ter_1_id}}",
+											"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\"",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_days // services from diff specs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'services'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('services');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-days?services={{caries_id}}, {{tooth_removal_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-days"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "3",
+											"description": "default=7",
+											"disabled": true
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}, {{tooth_removal_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctors",
+											"value": "{{doc_ter_1_id}}",
+											"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\"",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_days // doctor and services diff specs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('non_field_errors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-days?services={{caries_id}}&doctors={{doc_sur_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-days"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "3",
+											"description": "default=7",
+											"disabled": true
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctors",
+											"value": "{{doc_sur_1_id}}",
+											"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_days // doctors from diff specs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'doctors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('doctors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-days?services={{caries_id}}&doctors={{doc_sur_1_id}}, {{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-days"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "3",
+											"description": "default=7",
+											"disabled": true
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctors",
+											"value": "{{doc_sur_1_id}}, {{doc_ter_1_id}}",
+											"description": "default=all doctors from this spec.\n* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "get_available_timeslots",
+					"item": [
+						{
+							"name": "get_avaliable_timeslots // not enough time this day",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('non_field_errors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{tomorrow}}&services={{nerve_removal_id}}, {{nerve_removal_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{tomorrow}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{nerve_removal_id}}, {{nerve_removal_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // doc not working day",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('non_field_errors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{day_after_tomorrow}}&services={{nerve_removal_id}}, {{nerve_removal_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{day_after_tomorrow}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{nerve_removal_id}}, {{nerve_removal_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // clinic not working day",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'date'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('date');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{day_6}}&services={{caries_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{day_6}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // services from diff specs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'services'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('services');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{tomorrow}}&services={{caries_id}}, {{tooth_removal_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{tomorrow}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}, {{tooth_removal_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // doctor and services diff specs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('non_field_errors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{tomorrow}}&services={{tooth_removal_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{tomorrow}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{tooth_removal_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // doc day exception",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'non_field_errors'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('non_field_errors');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{day_after_tomorrow}}&services={{caries_id}}&doctor={{doc_ter_2_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{day_after_tomorrow}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_2_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_avaliable_timeslots // clinic day exception",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Ответ должен содержать поле 'date'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.have.property('date');",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/v1/get-available-timeslots?date={{day_4}}&services={{caries_id}}&doctor={{doc_ter_1_id}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"get-available-timeslots"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "{{day_4}}",
+											"description": "default=today"
+										},
+										{
+											"key": "services",
+											"value": "{{caries_id}}",
+											"description": "* example: \"1, 2, 3\""
+										},
+										{
+											"key": "doctor",
+											"value": "{{doc_ter_1_id}}",
+											"description": "* example: \"1, 2, 3\""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CRUD for Appointments",
 			"item": [
 				{
 					"name": "create_app_1 //",
@@ -331,38 +1112,6 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"// Создаем объект текущей даты",
-									"const today = new Date();",
-									"",
-									"// Функция для форматирования даты в формат YYYY-MM-DD",
-									"function formatDate(date) {",
-									"    const year = date.getFullYear();",
-									"    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11, поэтому +1",
-									"    const day = String(date.getDate()).padStart(2, '0');",
-									"    return `${year}-${month}-${day}`;",
-									"}",
-									"",
-									"// Сегодняшняя дата",
-									"const todayFormatted = formatDate(today);",
-									"pm.collectionVariables.set(\"today\", todayFormatted);",
-									"",
-									"// Завтрашняя дата",
-									"const tomorrow = new Date(today);",
-									"tomorrow.setDate(today.getDate() + 1);",
-									"const tomorrowFormatted = formatDate(tomorrow);",
-									"pm.collectionVariables.set(\"tomorrow\", tomorrowFormatted);",
-									"",
-									"// Послезавтрашняя дата",
-									"const dayAfterTomorrow = new Date(today);",
-									"dayAfterTomorrow.setDate(today.getDate() + 2);",
-									"const dayAfterTomorrowFormatted = formatDate(dayAfterTomorrow);",
-									"pm.collectionVariables.set(\"day_after_tomorrow\", dayAfterTomorrowFormatted);",
-									"",
-									"// Послезавтрашняя дата",
-									"const day_4 = new Date(today);",
-									"day_4.setDate(today.getDate() + 3);",
-									"const day_4Formatted = formatDate(day_4);",
-									"pm.collectionVariables.set(\"day_4\", day_4Formatted);",
 									""
 								],
 								"type": "text/javascript",
@@ -597,10 +1346,10 @@
 			]
 		},
 		{
-			"name": "Testing Validation",
+			"name": "Testing Create Validation",
 			"item": [
 				{
-					"name": "create_app_2 //",
+					"name": "create_app_2 // prepare",
 					"event": [
 						{
 							"listen": "test",
@@ -964,6 +1713,55 @@
 					"response": []
 				},
 				{
+					"name": "create_app_1 // clinic not working day",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Статус-код ответа должен быть 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Ответ должен содержать поле 'date'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('date');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"timeslots\":[\"12:30:00\", \"13:00:00\",\"13:30:00\"],\n    \"patient\": {{patient_1_id}},\n    \"doctor\": {{doc_ter_1_id}},\n    \"date\" : \"{{day_6}}\",\n    \"services\": [{{caries_id}}, {{consultation_ter_id}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/appointments/",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create_app_1 // doc not working time",
 					"event": [
 						{
@@ -1281,7 +2079,39 @@
 			"type": "string"
 		},
 		{
+			"key": "doc_sur_1_id",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "day_4",
+			"value": ""
+		},
+		{
+			"key": "spec_ter",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "spec_ort",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "spec_sur",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "day_5",
+			"value": ""
+		},
+		{
+			"key": "day_6",
+			"value": ""
+		},
+		{
+			"key": "day_7",
 			"value": ""
 		}
 	]

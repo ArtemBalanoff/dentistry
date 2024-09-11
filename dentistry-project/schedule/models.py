@@ -2,7 +2,6 @@ from datetime import time
 from django.db import models
 from users.models import DoctorProfile
 from dentistry.constants import REASON_MAX_LENGTH
-from django.core.exceptions import ValidationError
 
 
 WEEKDAY_CHOICES = (
@@ -44,10 +43,23 @@ class BaseSchedule(models.Model):
             weekday=self.weekday, start_time__lt=self.start_time)
         if doctors_too_early:
             self._message_doctors_too_early = (
-                f'Расписания докторов {", ".join([str(doctor) for doctor in doctors_too_early])} '
-                f'в {self.get_weekday_display().lower()} начинались слишком рано для только что внесенных изменений. '
-                f'Теперь их расписания начинаются с {self.start_time.strftime("%H:00")}')
+                'Расписания докторов '
+                f'{", ".join([str(doctor) for doctor in doctors_too_early])} '
+                f'в {self.get_weekday_display().lower()} начинались слишком '
+                'рано для только что внесенных изменений. Теперь их '
+                f'расписания начинаются с {self.start_time.strftime("%H:00")}')
             doctors_too_early.update(start_time=self.start_time)
+        doctors_too_late = DoctorSchedule.objects.filter(
+            weekday=self.weekday, end_time__gt=self.end_time)
+        if doctors_too_late:
+            self._message_doctors_too_late = (
+                'Расписания докторов '
+                f'{", ".join([str(doctor) for doctor in doctors_too_late])} '
+                f'в {self.get_weekday_display().lower()} заканчивались '
+                'слишком поздно для только что внесенных изменений. Теперь их '
+                'расписания заканчиваются в '
+                f'{self.start_time.strftime("%H:00")}')
+            doctors_too_late.update(start_time=self.end_time)
 
     class Meta:
         verbose_name = 'расписание дня клиники'
@@ -97,7 +109,7 @@ class ExceptionCase(models.Model):
     doctor = models.ForeignKey(
         DoctorProfile, related_name='exception_cases', verbose_name='Доктор',
         on_delete=models.CASCADE, null=True, blank=True,
-        help_text='Оставьте поле пустым, если речь идет об исключении для всей клиники')
+        help_text='Оставьте поле пустым, если исключение для всей клиники')
     date = models.DateField('Дата')
     reason = models.TextField('Причина', max_length=REASON_MAX_LENGTH,
                               default='Не указано')

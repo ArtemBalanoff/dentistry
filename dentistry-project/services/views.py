@@ -3,11 +3,11 @@ from .models import Option, Service
 from .serializers import OptionSerializer, ServiceSerializer
 
 
-class ServiceViewSet(viewsets.ModelViewSet):
+class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
 
-class OptionViewSet(viewsets.ModelViewSet):
+class OptionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
