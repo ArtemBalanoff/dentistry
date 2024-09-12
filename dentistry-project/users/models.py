@@ -1,5 +1,4 @@
 import datetime as dt
-from typing import Any
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from dentistry.constants import NAME_MAX_LENGTH, PHONE_MAX_LENGTH
@@ -40,6 +39,10 @@ class CustomUser(AbstractUser):
         stage = int((dt.date.today() - self.birth_day).total_seconds()
                     // (60 * 60 * 24 * 30 * 12))
         return f'{stage} лет (год(а))'
+
+    @property
+    def is_doctor(self):
+        return hasattr(self, 'doctor_profile')
 
 
 class DoctorUser(CustomUser):
@@ -108,5 +111,6 @@ class Specialization(models.Model):
 def auto_create_doctors_schedule(sender, instance, created, **kwargs):
     from schedule.models import DoctorSchedule
     if created:
-        schedule = [DoctorSchedule(doctor=instance, weekday=weekday) for weekday in range(7)]
+        schedule = [DoctorSchedule(doctor=instance,
+                                   weekday=weekday) for weekday in range(7)]
         DoctorSchedule.objects.bulk_create(schedule)

@@ -18,6 +18,9 @@ from .validators import (
     timeslots_freedom_validator,
     timeslots_validator)
 from .utils import check_doctor_working_day, get_timeslots_list
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TimeSlotSerializer(serializers.ModelSerializer):
@@ -107,6 +110,13 @@ class AppointmentSerializer(serializers.ModelSerializer):
     services = serializers.PrimaryKeyRelatedField(
         queryset=Service.objects.all(), many=True,
         write_only=True)
+    # doctor = serializers.SlugRelatedField(
+    #     queryset=DoctorProfile.objects.all(), slug_field='user__id'
+    # )
+    patient = serializers.PrimaryKeyRelatedField(
+        queryset=PatientProfile.objects.all(),
+        required=False
+    )
 
     class Meta:
         model = Appointment

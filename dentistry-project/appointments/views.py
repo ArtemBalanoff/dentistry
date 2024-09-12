@@ -2,6 +2,7 @@ import datetime as dt
 from http import HTTPStatus
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import viewsets
@@ -10,13 +11,27 @@ from .serializers import (
     AppointmentCloseSerializer, AppointmentSerializer,
     AvailableTimeSlotsSerializer, AvailableDaysSerializer
 )
+from .permissions import DoctorOnly
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+    permission_classes = (IsAuthenticated,)
 
-    @action(('PATCH',), detail=True)
+    def perform_create(self, serializer):
+        user = self.request.user
+        if not user.is_doctor:
+            serializer.save(patient=user.patient_profile)
+        serializer.save()
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_doctor:
+            return Appointment.objects.filter(patient=user.patient_profile)
+        return super().get_queryset()
+
+    @action(('PATCH',), detail=True, permission_classes=(DoctorOnly,))
     def close(self, request: Request, pk: int):
         instance = get_object_or_404(Appointment, pk=pk)
         serializer = AppointmentCloseSerializer(instance=instance,
@@ -24,11 +39,6 @@ class AppointmentViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             return Response(serializer.data)
         return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
-
-
-# class TimeSlotViewSet(ListViewSet):
-#     queryset = TimeSlot.objects.all()
-#     serializer_class = TimeSlotSerializer
 
 
 @api_view(('GET',))
