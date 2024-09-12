@@ -1,10 +1,21 @@
 import datetime as dt
+from typing import Any
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from dentistry.constants import NAME_MAX_LENGTH, PHONE_MAX_LENGTH
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .validators import phone_number_validator
+
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, phone_number, password=None, **extra_fields):
+        if not phone_number:
+            raise ValueError('У пользователя должен быть номер телефона')
+        user = self.model(phone_number=phone_number, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class CustomUser(AbstractUser):
@@ -17,6 +28,7 @@ class CustomUser(AbstractUser):
         unique=True, validators=(phone_number_validator,))
     birth_day = models.DateField('День Рождения', blank=True, null=True)
     USERNAME_FIELD = 'phone_number'
+    objects = CustomUserManager()
 
     def __str__(self):
         return f'{self.last_name} {self.first_name}'

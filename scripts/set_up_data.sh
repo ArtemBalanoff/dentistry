@@ -29,12 +29,12 @@ echo "import datetime as dt; \
     spec_ort = Specialization.objects.create(name='Ортодонт'); \
     spec_sur = Specialization.objects.create(name='Хирург'); \
     \
-    doc_ter_1 = User.objects.create(first_name='Иван', last_name='Будько', surname='Степанович', password='password', phone_number='+79781111113'); \
-    doc_ter_2 = User.objects.create(first_name='Юрий', last_name='Ковалев', surname='Анатольевич', password='password', phone_number='+79781111114'); \
+    doc_ter_1 = User.objects.create(first_name='Иван', last_name='Будько', surname='Степанович', phone_number='+79781111111'); doc_ter_1.set_password('secret-pass-01'); doc_ter_1.save(); \
+    doc_ter_2 = User.objects.create(first_name='Юрий', last_name='Ковалев', surname='Анатольевич', phone_number='+79782222222'); doc_ter_2.set_password('secret-pass-01'); doc_ter_2.save(); \
     doc_ter_1_profile = DoctorProfile.objects.create(user=doc_ter_1, carier_start=dt.date(year=2020, month=1, day=1), specialization=spec_ter); \
     doc_ter_2_profile = DoctorProfile.objects.create(user=doc_ter_2, carier_start=dt.date(year=2018, month=1, day=1), specialization=spec_ter); \
     \
-    doc_sur_1 = User.objects.create(first_name='Дмитрий', last_name='Буханкин', surname='Александрович', password='password', phone_number='+79781111115'); \
+    doc_sur_1 = User.objects.create(first_name='Дмитрий', last_name='Буханкин', surname='Александрович', phone_number='+79783333333'); doc_sur_1.set_password('secret-pass-01'); doc_sur_1.save(); \
     doc_sur_1_profile = DoctorProfile.objects.create(user=doc_sur_1, carier_start=dt.date(year=2016, month=1, day=1), specialization=spec_sur); \
     \
     day_0_doc_ter_1_sch = DoctorSchedule.objects.filter(doctor=doc_ter_1_profile, weekday=day_0).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
@@ -47,12 +47,6 @@ echo "import datetime as dt; \
     day_2_doc_ter_2_sch = DoctorSchedule.objects.filter(doctor=doc_ter_2_profile, weekday=day_2).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
     \
     tom_doc_ter_2_exception = ExceptionCase.objects.create(doctor=doc_ter_2_profile, date=(dt.date.today() + dt.timedelta(days=2))); \
-    \
-    patient_1 = User.objects.create(first_name='Андрей', last_name='Крамер', surname='Игоревич', password='password', phone_number='+79781111111'); \
-    patient_2 = User.objects.create(first_name='Саня', last_name='Бетон', surname='Арматурович', password='password', phone_number='+79781111112'); \
-    patient_1_profile = PatientProfile.objects.create(user=patient_1); \
-    patient_2_profile = PatientProfile.objects.create(user=patient_2); \
-    \
     service_caries = Service.objects.create(name='Кариес', description='Лечение кариеса', duration=60, specialization=spec_ter); \
     caries_option_1 = Option.objects.create(name='Легкая степень', price=6_000, service=service_caries); \
     caries_option_2 = Option.objects.create(name='Средняя степень', price=7_500, service=service_caries); \
@@ -70,3 +64,9 @@ echo "import datetime as dt; \
     superuser = User.objects.create(phone_number='+79788806140'); superuser.is_superuser=True; superuser.is_staff=True; superuser.set_password('password'); superuser.save()" \
     | $python manage.py shell
 echo "Setup done."
+    # \
+    # patient_1 = User.objects.create(first_name='Андрей', last_name='Крамер', surname='Игоревич', phone_number='+79781111111'); patient_1.set_password('secret-pass-01'); patient_1.save(); \
+    # patient_2 = User.objects.create(first_name='Саня', last_name='Бетон', surname='Арматурович', phone_number='+79781111112'); patient_2.set_password('secret-pass-01'); patient_2.save(); \
+    # patient_1_profile = PatientProfile.objects.create(user=patient_1); \
+    # patient_2_profile = PatientProfile.objects.create(user=patient_2); \
+    # \

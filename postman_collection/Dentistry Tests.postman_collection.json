@@ -7,6 +7,537 @@
 	},
 	"item": [
 		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Patients",
+					"item": [
+						{
+							"name": "Create Patient // patient_1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"const appointmentId = _.get(responseData, \"id\");",
+											"if (appointmentId) {",
+											"    pm.collectionVariables.set(\"patient_1_id\", appointmentId);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{patient_1_phone}}\",\n    \"password\": \"{{password}}\",\n    \"email\": \"{{patient_1_email}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/users/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JWT Create // patient_1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"",
+											"// Ожидаемая структура ответа",
+											"const responseSchema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"refresh\": {\"type\": \"string\"},",
+											"        \"access\": {\"type\": \"string\"}",
+											"    },",
+											"    \"required\": [\"refresh\", \"access\"],",
+											"    \"additionalProperties\": false",
+											"};",
+											"",
+											"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+											"    pm.expect(",
+											"        pm.response.status,",
+											"        \"Когда пользователь отправляет запрос на получение токенов - должен вернуться ответ с кодом 200\"",
+											"    ).to.be.eql(\"OK\");",
+											"});",
+											"",
+											"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+											"    pm.response.to.have.jsonSchema(responseSchema);",
+											"});",
+											"",
+											"// Сохранение токена access в переменную коллекции",
+											"const accessToken = _.get(responseData, \"access\");",
+											"if (accessToken) {",
+											"    pm.collectionVariables.set(\"patient_1_token\", accessToken);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{patient_1_phone}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/jwt/create/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"jwt",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Patient // patient_1",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{patient_1_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"first_name\": \"{{patient_1_first_name}}\",\n    \"last_name\": \"{{patient_1_last_name}}\",\n    \"surname\": \"{{patient_1_surname}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/users/me/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										"me",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Patient // patient_2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"const appointmentId = _.get(responseData, \"id\");",
+											"if (appointmentId) {",
+											"    pm.collectionVariables.set(\"patient_2_id\", appointmentId);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{patient_2_phone}}\",\n    \"password\": \"{{password}}\",\n    \"email\": \"{{patient_2_email}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/users/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JWT Create // patient_2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"",
+											"// Ожидаемая структура ответа",
+											"const responseSchema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"refresh\": {\"type\": \"string\"},",
+											"        \"access\": {\"type\": \"string\"}",
+											"    },",
+											"    \"required\": [\"refresh\", \"access\"],",
+											"    \"additionalProperties\": false",
+											"};",
+											"",
+											"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+											"    pm.expect(",
+											"        pm.response.status,",
+											"        \"Когда пользователь отправляет запрос на получение токенов - должен вернуться ответ с кодом 200\"",
+											"    ).to.be.eql(\"OK\");",
+											"});",
+											"",
+											"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+											"    pm.response.to.have.jsonSchema(responseSchema);",
+											"});",
+											"",
+											"// Сохранение токена access в переменную коллекции",
+											"const accessToken = _.get(responseData, \"access\");",
+											"if (accessToken) {",
+											"    pm.collectionVariables.set(\"patient_2_token\", accessToken);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{patient_2_phone}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/jwt/create/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"jwt",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Patient // patient_2",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{patient_2_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"first_name\": \"{{patient_2_first_name}}\",\n    \"last_name\": \"{{patient_2_last_name}}\",\n    \"surname\": \"{{patient_2_surname}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/users/me/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										"me",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Doctors",
+					"item": [
+						{
+							"name": "JWT Create // doc_ter_1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"",
+											"// Ожидаемая структура ответа",
+											"const responseSchema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"refresh\": {\"type\": \"string\"},",
+											"        \"access\": {\"type\": \"string\"}",
+											"    },",
+											"    \"required\": [\"refresh\", \"access\"],",
+											"    \"additionalProperties\": false",
+											"};",
+											"",
+											"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+											"    pm.expect(",
+											"        pm.response.status,",
+											"        \"Когда пользователь отправляет запрос на получение токенов - должен вернуться ответ с кодом 200\"",
+											"    ).to.be.eql(\"OK\");",
+											"});",
+											"",
+											"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+											"    pm.response.to.have.jsonSchema(responseSchema);",
+											"});",
+											"",
+											"// Сохранение токена access в переменную коллекции",
+											"const accessToken = _.get(responseData, \"access\");",
+											"if (accessToken) {",
+											"    pm.collectionVariables.set(\"doc_ter_1_token\", accessToken);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{doc_ter_1_phone}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/jwt/create/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"jwt",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JWT Create // doc_ter_2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"",
+											"// Ожидаемая структура ответа",
+											"const responseSchema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"refresh\": {\"type\": \"string\"},",
+											"        \"access\": {\"type\": \"string\"}",
+											"    },",
+											"    \"required\": [\"refresh\", \"access\"],",
+											"    \"additionalProperties\": false",
+											"};",
+											"",
+											"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+											"    pm.expect(",
+											"        pm.response.status,",
+											"        \"Когда пользователь отправляет запрос на получение токенов - должен вернуться ответ с кодом 200\"",
+											"    ).to.be.eql(\"OK\");",
+											"});",
+											"",
+											"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+											"    pm.response.to.have.jsonSchema(responseSchema);",
+											"});",
+											"",
+											"// Сохранение токена access в переменную коллекции",
+											"const accessToken = _.get(responseData, \"access\");",
+											"if (accessToken) {",
+											"    pm.collectionVariables.set(\"doc_ter_2_token\", accessToken);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{doc_ter_2_phone}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/jwt/create/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"jwt",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "JWT Create // doc_sur_1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseData = pm.response.json();",
+											"",
+											"// Ожидаемая структура ответа",
+											"const responseSchema = {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"        \"refresh\": {\"type\": \"string\"},",
+											"        \"access\": {\"type\": \"string\"}",
+											"    },",
+											"    \"required\": [\"refresh\", \"access\"],",
+											"    \"additionalProperties\": false",
+											"};",
+											"",
+											"pm.test(\"Статус-код ответа должен быть 200\", function () {",
+											"    pm.expect(",
+											"        pm.response.status,",
+											"        \"Когда пользователь отправляет запрос на получение токенов - должен вернуться ответ с кодом 200\"",
+											"    ).to.be.eql(\"OK\");",
+											"});",
+											"",
+											"pm.test(\"Структура ответа должна соответствовать ожидаемой\", function () {",
+											"    pm.response.to.have.jsonSchema(responseSchema);",
+											"});",
+											"",
+											"// Сохранение токена access в переменную коллекции",
+											"const accessToken = _.get(responseData, \"access\");",
+											"if (accessToken) {",
+											"    pm.collectionVariables.set(\"doc_sur_1_token\", accessToken);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phone_number\": \"{{doc_sur_1_phone}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/auth/jwt/create/",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"auth",
+										"jwt",
+										"create",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Get Requests",
 			"item": [
 				{
@@ -1349,7 +1880,7 @@
 			"name": "Testing Create Validation",
 			"item": [
 				{
-					"name": "create_app_2 // prepare",
+					"name": "create // prepare",
 					"event": [
 						{
 							"listen": "test",
@@ -1468,7 +1999,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // too much timeslots",
+					"name": "create // too much timeslots",
 					"event": [
 						{
 							"listen": "test",
@@ -1517,7 +2048,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // not enough timeslots",
+					"name": "create // not enough timeslots",
 					"event": [
 						{
 							"listen": "test",
@@ -1566,7 +2097,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // inconsistent timeslots",
+					"name": "create // inconsistent timeslots",
 					"event": [
 						{
 							"listen": "test",
@@ -1615,7 +2146,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // busy timeslots",
+					"name": "create // busy timeslots",
 					"event": [
 						{
 							"listen": "test",
@@ -1664,7 +2195,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // doc not working day",
+					"name": "create // doc not working day",
 					"event": [
 						{
 							"listen": "test",
@@ -1713,7 +2244,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // clinic not working day",
+					"name": "create // clinic not working day",
 					"event": [
 						{
 							"listen": "test",
@@ -1762,7 +2293,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // doc not working time",
+					"name": "create // doc not working time",
 					"event": [
 						{
 							"listen": "test",
@@ -1811,7 +2342,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // services from diff specs",
+					"name": "create // services from diff specs",
 					"event": [
 						{
 							"listen": "test",
@@ -1860,7 +2391,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // doc day exception",
+					"name": "create // doc day exception",
 					"event": [
 						{
 							"listen": "test",
@@ -1909,7 +2440,7 @@
 					"response": []
 				},
 				{
-					"name": "create_app_1 // clinic day exception",
+					"name": "create // clinic day exception",
 					"event": [
 						{
 							"listen": "test",
@@ -2015,6 +2546,15 @@
 			"type": "string"
 		},
 		{
+			"key": "doc_ter_2_phone",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "caries_id",
 			"value": "",
 			"type": "string"
@@ -2084,6 +2624,11 @@
 			"type": "string"
 		},
 		{
+			"key": "doc_sur_1_phone",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "day_4",
 			"value": ""
 		},
@@ -2112,6 +2657,90 @@
 		},
 		{
 			"key": "day_7",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doc_ter_1_phone",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doc_ter_1_token",
+			"value": ""
+		},
+		{
+			"key": "patient_1_phone",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_1_first_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_1_last_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_1_token",
+			"value": ""
+		},
+		{
+			"key": "patient_1_surname",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_phone",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_first_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_last_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_surname",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_id",
+			"value": ""
+		},
+		{
+			"key": "patient_2_token",
+			"value": ""
+		},
+		{
+			"key": "patient_1_email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "patient_2_email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "doc_ter_2_token",
+			"value": ""
+		},
+		{
+			"key": "doc_sur_1_token",
 			"value": ""
 		}
 	]

@@ -1,15 +1,23 @@
 from rest_framework import serializers
 from .models import DoctorProfile, PatientProfile, Specialization
 from django.contrib.auth import get_user_model
+from djoser.serializers import UserSerializer, UserCreateSerializer
 
 User = get_user_model()
 
 
-class BaseUserSerializer(serializers.ModelSerializer):
-    class Meta:
+class BaseUserSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
         model = User
         fields = ('phone_number', 'first_name', 'last_name',
-                  'surname')
+                  'surname', 'email')
+
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        PatientProfile.objects.create(user=user)
+        return user
 
 
 class DoctorSerializer(serializers.ModelSerializer):

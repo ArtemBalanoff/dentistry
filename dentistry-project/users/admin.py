@@ -71,7 +71,8 @@ class PatientAdmin(admin.ModelAdmin):
               'password', 'birth_day')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(patient_profile__isnull=False)
+        return super().get_queryset(request).filter(
+            patient_profile__isnull=False)
 
     @admin.display(description='Возраст')
     def get_age(self, obj):
