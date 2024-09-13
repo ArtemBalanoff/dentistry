@@ -1,0 +1,35 @@
+version: '3'
+
+volumes:
+  pg_data:
+  static:
+  media:
+
+services:
+  db:
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+  backend:
+    image: artembalanoff/dentistry_backend
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - static:/backend_static
+      - media:/app/media
+  gateway:
+    image: artembalanoff/dentistry_gateway
+    ports:
+      - 9000:80
+    volumes:
+      - media:/media
+      - static:/static

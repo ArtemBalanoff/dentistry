@@ -1,4 +1,4 @@
-from appointments.permissions import DoctorOnly
+from dentistry.permissions import DoctorsOnly
 from .models import BaseSchedule, DoctorSchedule, ExceptionCase
 from rest_framework import viewsets
 from .serializers import (BaseScheduleSerializer, DoctorScheduleSerializer,
@@ -18,4 +18,4 @@ class DoctorScheduleViewSet(viewsets.ReadOnlyModelViewSet):
 class ExceptionCaseViewSet(viewsets.ModelViewSet):
     queryset = ExceptionCase.objects.all()
     serializer_class = ExceptionCaseSerializer
-    permission_classes = (DoctorOnly,)
+    permission_classes = (DoctorsOnly,)

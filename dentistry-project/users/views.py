@@ -1,4 +1,4 @@
-from appointments.permissions import DoctorOnly
+from dentistry.permissions import DoctorsOnly
 from rest_framework import viewsets
 from .models import DoctorProfile, PatientProfile, Specialization
 from .serializers import (
@@ -13,7 +13,7 @@ class DoctorViewSet(viewsets.ReadOnlyModelViewSet):
 class PatientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PatientProfile.objects.all()
     serializer_class = PatientSerializer
-    permission_classes = (DoctorOnly,)
+    permission_classes = (DoctorsOnly,)
 
 
 class SpecializationViewSet(viewsets.ReadOnlyModelViewSet):

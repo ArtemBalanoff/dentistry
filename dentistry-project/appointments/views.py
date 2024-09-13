@@ -2,7 +2,7 @@ import datetime as dt
 from http import HTTPStatus
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import viewsets
@@ -11,7 +11,7 @@ from .serializers import (
     AppointmentCloseSerializer, AppointmentSerializer,
     AvailableTimeSlotsSerializer, AvailableDaysSerializer
 )
-from .permissions import DoctorOnly
+from dentistry.permissions import CurrentDoctorOnly
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
@@ -31,7 +31,8 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             return Appointment.objects.filter(patient=user.patient_profile)
         return super().get_queryset()
 
-    @action(('PATCH',), detail=True, permission_classes=(DoctorOnly,))
+    @action(('PATCH',), detail=True,
+            permission_classes=(CurrentDoctorOnly | IsAdminUser,))
     def close(self, request: Request, pk: int):
         instance = get_object_or_404(Appointment, pk=pk)
         serializer = AppointmentCloseSerializer(instance=instance,
