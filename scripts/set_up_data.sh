@@ -43,8 +43,8 @@ echo "import datetime as dt; \
     day_1_doc_ter_1_sch = DoctorSchedule.objects.filter(doctor=doc_ter_1_profile, weekday=day_1).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
     day_1_doc_ter_2_sch = DoctorSchedule.objects.filter(doctor=doc_ter_2_profile, weekday=day_1).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
     \
-    day_2_doc_ter_1_sch = DoctorSchedule.objects.filter(doctor=doc_ter_1_profile, weekday=day_2).update(is_working=False); \
-    day_2_doc_ter_2_sch = DoctorSchedule.objects.filter(doctor=doc_ter_2_profile, weekday=day_2).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
+    day_2_doc_ter_1_sch = DoctorSchedule.objects.filter(doctor=doc_ter_1_profile, weekday=day_2).update(is_working=True, start_time=dt.time(hour=12), end_time=dt.time(hour=14)); \
+    day_2_doc_ter_2_sch = DoctorSchedule.objects.filter(doctor=doc_ter_2_profile, weekday=day_2).update(is_working=False); \
     \
     tom_doc_ter_2_exception = ExceptionCase.objects.create(doctor=doc_ter_2_profile, date=(dt.date.today() + dt.timedelta(days=2))); \
     service_caries = Service.objects.create(name='Кариес', description='Лечение кариеса', duration=60, specialization=spec_ter); \

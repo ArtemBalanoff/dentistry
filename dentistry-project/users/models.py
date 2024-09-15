@@ -44,6 +44,10 @@ class CustomUser(AbstractUser):
     def is_doctor(self):
         return hasattr(self, 'doctor_profile')
 
+    @property
+    def is_patient(self):
+        return hasattr(self, 'patient_profile')
+
 
 class DoctorUser(CustomUser):
     class Meta:

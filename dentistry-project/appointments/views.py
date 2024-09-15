@@ -21,9 +21,10 @@ class AppointmentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        if not user.is_doctor:
+        if user.is_patient:
             serializer.save(patient=user.patient_profile)
-        serializer.save()
+        else:
+            serializer.save()
 
     def get_queryset(self):
         user = self.request.user
