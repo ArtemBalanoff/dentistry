@@ -60,9 +60,9 @@ jobs:
       - name: Push to dockerhub
         uses: docker/build-push-action@v4
         with:
-          context: ./nginx/
+          context: ./gateway/
           push: true
-          tags: artembalanoff/kittygram_gateway:latest
+          tags: artembalanoff/dentistry_gateway:latest
 
   deploy:
     name: Deploy the app
@@ -81,7 +81,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
-          target: "kittygram"
+          target: "dentistry"
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
