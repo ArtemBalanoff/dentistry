@@ -19,16 +19,17 @@ router_v1.register('appointments', AppointmentViewSet)
 router_v1.register('clinic-schedule', BaseScheduleViewSet)
 router_v1.register('doctors-schedule', DoctorScheduleViewSet)
 router_v1.register('exceptions', ExceptionCaseViewSet)
+auth_urls = [
+    path('auth/', include(djoser_urls)),
+    path('auth/', include(jwt_urls)),
+]
 
 urls_v1 = []
 urls_v1.extend(router_v1.urls)
-# urls_v1.extend(djoser_urls)
-# urls_v1.extend(jwt_urls)
+urls_v1.extend(auth_urls)
 
 urlpatterns = [
     path('v1/', include(urls_v1)),
     path('v1/get-available-days', avaliable_days),
     path('v1/get-available-timeslots', avaliable_timeslots),
-    path('v1/auth/', include('djoser.urls')),
-    path('v1/auth/', include('djoser.urls.jwt')),
 ]

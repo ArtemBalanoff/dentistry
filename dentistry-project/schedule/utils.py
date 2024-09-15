@@ -41,7 +41,7 @@ def check_if_docs_working(self: BaseSchedule):
 
 
 def check_if_clinic_closed(self: BaseSchedule):
-    if BaseSchedule.objects.get(weekday=self.weekday).is_open == False:
+    if BaseSchedule.objects.get(weekday=self.weekday).is_open is False:
         raise ValidationError(
             'Доктор не может работать в день, когда не работает клиника'
         )

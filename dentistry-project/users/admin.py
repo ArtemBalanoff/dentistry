@@ -31,13 +31,15 @@ class PatientProfileInline(admin.StackedInline):
 @admin.register(DoctorUser)
 class DoctorAdmin(admin.ModelAdmin):
     inlines = (DoctorProfileInline,)
-    list_display = ('last_name', 'first_name', 'surname', 'get_doctor_specialization',
-                    'get_doctor_stage', 'get_phone_number')
+    list_display = (
+        'last_name', 'first_name', 'surname', 'get_doctor_specialization',
+        'get_doctor_stage', 'get_phone_number')
     fields = ('phone_number', 'last_name', 'first_name', 'surname',
               'password', 'birth_day')
 
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(doctor_profile__isnull=False)
+        return super().get_queryset(request).filter(
+            doctor_profile__isnull=False)
 
     @admin.display(description='Специальность')
     def get_doctor_specialization(self, obj):
