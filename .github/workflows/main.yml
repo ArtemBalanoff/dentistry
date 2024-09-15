@@ -66,6 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - backend_linter_tests
+      - backend_db_tests
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v3
