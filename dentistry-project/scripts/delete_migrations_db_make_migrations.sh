@@ -6,7 +6,7 @@ case "$OSTYPE" in
     *)        python=python3 ;;
 esac
 
-START_DIR="dentistry-project/"
+START_DIR="."
 
 find "$START_DIR" -type d -name "migrations" | while read -r migrations_dir; do
 
@@ -15,8 +15,5 @@ find "$START_DIR" -type d -name "migrations" | while read -r migrations_dir; do
 
 done
 
-source venv/bin/activate
-cd dentistry-project
-rm -f "db.sqlite3"
 $python manage.py makemigrations
 $python manage.py migrate
