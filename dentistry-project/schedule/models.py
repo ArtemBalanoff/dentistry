@@ -101,6 +101,7 @@ class ExceptionCase(models.Model):
     class Meta:
         verbose_name = 'исключение'
         verbose_name_plural = 'Исключения'
+        ordering = ('date',)
 
     def __str__(self):
         return str(self.date)

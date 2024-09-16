@@ -9,8 +9,6 @@ from .validators import phone_number_validator
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
-        if not phone_number:
-            raise ValueError('У пользователя должен быть номер телефона')
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -30,7 +28,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name}'
+        return f'{self.last_name} {self.first_name} {self.surname}'
 
     @property
     def age(self):
@@ -73,13 +71,14 @@ class DoctorProfile(models.Model):
         verbose_name='Специализация',
         related_name='doctors'
     )
+    photo = models.ImageField('Фотография', upload_to='doctors/photos/')
 
     class Meta:
         verbose_name = 'профиль врача'
         verbose_name_plural = 'Врачи'
 
     def __str__(self):
-        return self.user.first_name + ' ' + self.user.last_name
+        return str(self.user)
 
     @property
     def stage(self):
@@ -98,6 +97,9 @@ class PatientProfile(models.Model):
     @property
     def appointments_count(self):
         return self.appointments.count()
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Specialization(models.Model):

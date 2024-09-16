@@ -59,6 +59,6 @@ echo "import datetime as dt; \
     tooth_removal_option_1 = Option.objects.create(name='Легкая степень', price=9_500, service=service_tooth_removal); \
     tooth_removal_option_2 = Option.objects.create(name='Средняя степень', price=11_000, service=service_tooth_removal); \
     tooth_removal_option_3 = Option.objects.create(name='Тяжелая степень', price=13_500, service=service_tooth_removal); \
-    superuser = User.objects.create(phone_number='+79788806140'); superuser.is_superuser=True; superuser.is_staff=True; superuser.set_password('password'); superuser.save()" \
+    superuser = User.objects.create(phone_number='+79786666666'); superuser.is_superuser=True; superuser.is_staff=True; superuser.set_password('password'); superuser.save()" \
     | $python manage.py shell
 echo "Setup done."

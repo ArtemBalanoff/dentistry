@@ -36,6 +36,7 @@ class DoctorAdmin(admin.ModelAdmin):
         'get_doctor_stage', 'get_phone_number')
     fields = ('phone_number', 'last_name', 'first_name', 'surname',
               'password', 'birth_day')
+    list_filter = ('doctor_profile__specialization',)
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(

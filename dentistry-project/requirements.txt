@@ -25,6 +25,7 @@ MarkupSafe==2.1.5
 mccabe==0.7.0
 oauthlib==3.2.2
 packaging==24.1
+pillow==10.4.0
 pip-check-reqs==2.5.3
 psycopg2-binary==2.9.3
 pycodestyle==2.12.1

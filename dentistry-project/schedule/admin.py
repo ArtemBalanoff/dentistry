@@ -40,4 +40,11 @@ class DoctorScheduleAdmin(admin.ModelAdmin):
 
 @admin.register(ExceptionCase)
 class ExceptionCaseAdmin(admin.ModelAdmin):
-    list_display = ('doctor', 'date', 'reason')
+    list_display = ('get_doctor', 'date', 'reason')
+    list_filter = ('doctor',)
+
+    @admin.display(description='Отсутствующий')
+    def get_doctor(self, obj):
+        resp = str(obj.doctor)
+        resp = 'Вся клиника *' if resp == 'None' else resp
+        return resp
