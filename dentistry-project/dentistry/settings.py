@@ -141,3 +141,5 @@ DJOSER = {
         'current_user': 'users.serializers.BaseUserSerializer',
     },
 }
+
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(', ')
