@@ -62,9 +62,3 @@ echo "import datetime as dt; \
     superuser = User.objects.create(phone_number='+79788806140'); superuser.is_superuser=True; superuser.is_staff=True; superuser.set_password('password'); superuser.save()" \
     | $python manage.py shell
 echo "Setup done."
-    # \
-    # patient_1 = User.objects.create(first_name='Андрей', last_name='Крамер', surname='Игоревич', phone_number='+79781111111'); patient_1.set_password('secret-pass-01'); patient_1.save(); \
-    # patient_2 = User.objects.create(first_name='Саня', last_name='Бетон', surname='Арматурович', phone_number='+79781111112'); patient_2.set_password('secret-pass-01'); patient_2.save(); \
-    # patient_1_profile = PatientProfile.objects.create(user=patient_1); \
-    # patient_2_profile = PatientProfile.objects.create(user=patient_2); \
-    # \
