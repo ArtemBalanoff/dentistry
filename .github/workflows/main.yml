@@ -140,7 +140,9 @@ jobs:
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down -v
             sudo docker compose -f docker-compose.production.yml up -d
-            sleep 90
+            until sudo docker compose -f docker-compose.production.yml exec db pg_isready -U $POSTGRES_USER; do
+              sleep 10
+            done
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.production.yml exec backend bash scripts/set_up_data.sh
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
