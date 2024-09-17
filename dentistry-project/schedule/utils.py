@@ -34,7 +34,7 @@ def check_if_docs_working(self: BaseSchedule):
             'В расписании докторов '
             f'{", ".join([str(doctor) for doctor in docs_sch_working])} '
             f'{self.get_weekday_display().lower()} был указан как рабочий '
-            'день, но вы объявили его как не рабочий день у клиники. '
+            'день, но вы объявили его как нерабочий день у клиники. '
             'Теперь для всех докторов '
             f'{self.get_weekday_display().lower()} - нерабочий день')
         docs_sch_working.update(is_working=False)
@@ -68,5 +68,5 @@ def compare_doctors_schedule_to_base(self: DoctorSchedule) -> None:
         self._message_too_late = (
             f'В {self.get_weekday_display().lower()} клиника работает '
             f'до {base_schedule.end_time.strftime("%H:00")}. Время '
-            f'начала работы врача {self.doctor} изменено на '
+            f'конца работы врача {self.doctor} изменено на '
             f'{base_schedule.end_time.strftime("%H:00")}.')

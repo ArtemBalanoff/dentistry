@@ -71,7 +71,8 @@ class DoctorProfile(models.Model):
         verbose_name='Специализация',
         related_name='doctors'
     )
-    photo = models.ImageField('Фотография', upload_to='doctors/photos/')
+    photo = models.ImageField('Фотография', upload_to='doctors/photos/',
+                              blank=True, null=True)
 
     class Meta:
         verbose_name = 'профиль врача'
