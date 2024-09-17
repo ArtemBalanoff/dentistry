@@ -6,7 +6,6 @@ case "$OSTYPE" in
     *)        python=python3 ;;
 esac
 
-$python manage.py migrate
 $python manage.py flush --no-input
 echo "import datetime as dt; \
     from django.contrib.auth import get_user_model; User = get_user_model(); \
