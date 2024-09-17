@@ -131,16 +131,13 @@ jobs:
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd dentistry
+            source .env
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down -v
             sudo docker compose -f docker-compose.production.yml up -d
-            until sudo docker compose -f docker-compose.production.yml exec db pg_isready -U ${POSTGRES_USER}; do
+            until sudo docker compose -f docker-compose.production.yml exec db pg_isready -U $POSTGRES_USER; do
               sleep 10
             done
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
