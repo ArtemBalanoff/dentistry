@@ -61,6 +61,7 @@ jobs:
           DEBUG: True
           ALLOWED_HOSTS: localhost
           SECRET_KEY: secretkey
+          CSRF_TRUSTED_ORIGINS: https://dentistry.servebeer.com
         run: |
           cd dentistry-project/
           python3 manage.py migrate
