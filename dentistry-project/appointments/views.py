@@ -12,12 +12,14 @@ from .serializers import (
     AvailableTimeSlotsSerializer, AvailableDaysSerializer
 )
 from dentistry.permissions import CurrentDoctorOnly
+from rest_framework.pagination import PageNumberPagination
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = (IsAuthenticated,)
+    pagination_class = PageNumberPagination
 
     def perform_create(self, serializer):
         user = self.request.user
