@@ -60,7 +60,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DEBUG: True
-          ALLOWED_HOSTS: '*'
+          ALLOWED_HOSTS: localhost
           SECRET_KEY: secretkey
           CSRF_TRUSTED_ORIGINS: https://dentistry.servebeer.com
           DJANGO_ENV: production
