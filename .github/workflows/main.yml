@@ -65,7 +65,7 @@ jobs:
           cd dentistry-project/
           python3 manage.py migrate
           bash scripts/set_up_data.sh
-          python3 manage.py runserver
+          python3 manage.py runserver &
 
       - name: Install Node.js
         uses: actions/setup-node@v2
