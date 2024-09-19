@@ -76,7 +76,7 @@ jobs:
 
       - name: Run Postman Collection
         run: |
-          newman run ../postman_collection/Dentistry Collection.postman_collection \
+          newman run ../postman_collection/Dentistry-Collection.postman_collection.json \
           --reporters cli,junit --reporter-junit-export newman-report.xml
 
       - name: Upload Postman Test Results
