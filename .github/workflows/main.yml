@@ -1,6 +1,9 @@
 name: main workflow for dentistry
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   backend_linter_tests:
@@ -78,13 +81,17 @@ jobs:
       - name: Run Postman Collection
         run: |
           newman run postman_collection/Dentistry-Collection.postman_collection.json \
-          --reporters cli,junit --reporter-junit-export newman-report.xml
+          --reporters cli,json --reporter-json-export newman-log.json \
+          --reporter-junit-export newman-report.xml
 
       - name: Upload Postman Test Results
         uses: actions/upload-artifact@v3
         with:
           name: postman-test-results
-          path: newman-report.xml
+          path: |
+            newman-report.xml
+            newman-log.json
+
 
   build_backend_and_push_to_dockerhub:
     name: Build and Push Backend Image to DockerHub
