@@ -4295,11 +4295,11 @@
 	"variable": [
 		{
 			"key": "today",
-			"value": ""
+			"value": "2024-09-19"
 		},
 		{
 			"key": "host",
-			"value": "",
+			"value": "127.0.0.1:8000",
 			"type": "string"
 		},
 		{
@@ -4310,223 +4310,223 @@
 		},
 		{
 			"key": "tomorrow",
-			"value": ""
+			"value": "2024-09-20"
 		},
 		{
 			"key": "day_after_tomorrow",
-			"value": ""
+			"value": "2024-09-21"
 		},
 		{
 			"key": "appointment_id_1",
-			"value": ""
+			"value": 1
 		},
 		{
 			"key": "doc_ter_1_id",
-			"value": "",
+			"value": 1,
 			"type": "string"
 		},
 		{
 			"key": "doc_ter_2_id",
-			"value": "",
+			"value": 2,
 			"type": "string"
 		},
 		{
 			"key": "doc_ter_2_phone",
-			"value": "",
+			"value": "+79782222222",
 			"type": "string"
 		},
 		{
 			"key": "caries_id",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "caries_light_id",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "caries_medium_id",
-			"value": "",
+			"value": "2",
 			"type": "string"
 		},
 		{
 			"key": "caries_hard_id",
-			"value": "",
+			"value": "3",
 			"type": "string"
 		},
 		{
 			"key": "nerve_removal_id",
-			"value": "",
+			"value": "2",
 			"type": "string"
 		},
 		{
 			"key": "nerve_light_id",
-			"value": "",
+			"value": "4",
 			"type": "string"
 		},
 		{
 			"key": "nerve_medium_id",
-			"value": "",
+			"value": "5",
 			"type": "string"
 		},
 		{
 			"key": "nerve_hard_id",
-			"value": "",
+			"value": "6",
 			"type": "string"
 		},
 		{
 			"key": "consultation_ter_id",
-			"value": "",
+			"value": "3",
 			"type": "string"
 		},
 		{
 			"key": "consultation_basic_id",
-			"value": "",
+			"value": "7",
 			"type": "string"
 		},
 		{
 			"key": "patient_1_id",
-			"value": "",
+			"value": 1,
 			"type": "string"
 		},
 		{
 			"key": "tooth_removal_id",
-			"value": "",
+			"value": "4",
 			"type": "string"
 		},
 		{
 			"key": "doc_sur_1_id",
-			"value": "",
+			"value": 3,
 			"type": "string"
 		},
 		{
 			"key": "doc_sur_1_phone",
-			"value": "",
+			"value": "+79783333333",
 			"type": "string"
 		},
 		{
 			"key": "day_4",
-			"value": ""
+			"value": "2024-09-22"
 		},
 		{
 			"key": "spec_ter",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		},
 		{
 			"key": "spec_ort",
-			"value": "",
+			"value": "2",
 			"type": "string"
 		},
 		{
 			"key": "spec_sur",
-			"value": "",
+			"value": "3",
 			"type": "string"
 		},
 		{
 			"key": "day_5",
-			"value": ""
+			"value": "2024-09-23"
 		},
 		{
 			"key": "day_6",
-			"value": ""
+			"value": "2024-09-24"
 		},
 		{
 			"key": "day_7",
-			"value": ""
+			"value": "2024-09-25"
 		},
 		{
 			"key": "password",
-			"value": "",
+			"value": "secret-pass-01",
 			"type": "string"
 		},
 		{
 			"key": "doc_ter_1_phone",
-			"value": "",
+			"value": "+79781111111",
 			"type": "string"
 		},
 		{
 			"key": "doc_ter_1_token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODQxMjcyLCJqdGkiOiIwNmUxNTI5YmMxMDA0MWYzOWVmNDMyZjlkNzQ5N2RjOSIsInVzZXJfaWQiOjF9.Yv4Rd7SR84u6u5PTnpk8g7OkIo-4gXJv-im1_qgnTpk"
 		},
 		{
 			"key": "patient_1_phone",
-			"value": "",
+			"value": "+79784444444",
 			"type": "string"
 		},
 		{
 			"key": "patient_1_first_name",
-			"value": "",
+			"value": "Максим",
 			"type": "string"
 		},
 		{
 			"key": "patient_1_last_name",
-			"value": "",
+			"value": "Максимов",
 			"type": "string"
 		},
 		{
 			"key": "patient_1_token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODQxMjcxLCJqdGkiOiI4M2M5YTYzMjRjYzc0ZDdjYjUyMmNjOWVlNGViMzkwMiIsInVzZXJfaWQiOjV9.rBADrjLzU56tqqavSFJUaNBWPkRlQDKwgHebumVVC9Y"
 		},
 		{
 			"key": "patient_1_surname",
-			"value": "",
+			"value": "Максимович",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_phone",
-			"value": "",
+			"value": "+79785555555",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_first_name",
-			"value": "",
+			"value": "Олег",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_last_name",
-			"value": "",
+			"value": "Олегов",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_surname",
-			"value": "",
+			"value": "Олегович",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_id",
-			"value": ""
+			"value": 2
 		},
 		{
 			"key": "patient_2_token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODQxMjcyLCJqdGkiOiJmMjc5ZTFlYzA5MDk0ZWY0OTRmMjc2MjAxMjcyOTE2OSIsInVzZXJfaWQiOjZ9.XcMJ6-kuKYvb39AXtx8_Qwtj4kHdkslcbVtifLaHirU"
 		},
 		{
 			"key": "patient_1_email",
-			"value": "",
+			"value": "maks@gmail.com",
 			"type": "string"
 		},
 		{
 			"key": "patient_2_email",
-			"value": "",
+			"value": "oleg@gmail.com",
 			"type": "string"
 		},
 		{
 			"key": "doc_ter_2_token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODQxMjcyLCJqdGkiOiI1ODg0NzQ4MzNhMTE0MTZjYmFlMWQwZWQyMWU3ZDU4YSIsInVzZXJfaWQiOjJ9.qqzTvCsdwgBjJb1tsHswxOZY_FFz4d-kmb7wevNeta8"
 		},
 		{
 			"key": "doc_sur_1_token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2ODQxMjcyLCJqdGkiOiIzYjM3YmM1MzI0MjU0ZTEzYmEzMTkwYWE1YjBjYjg3MyIsInVzZXJfaWQiOjN9.x4MYmNH2aAbp2UCPkEyYVaz1ZjXzcqd8SzDMDSlocVw"
 		},
 		{
 			"key": "appointment_id_2",
-			"value": ""
+			"value": 2
 		},
 		{
 			"key": "appointment_id_3",
-			"value": ""
+			"value": 3
 		}
 	]
 }
