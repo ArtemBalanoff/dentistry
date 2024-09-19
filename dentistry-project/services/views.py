@@ -1,16 +1,21 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from .models import Option, Service
 from .serializers import OptionSerializer, ServiceSerializer
-from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('specialization',)
+    search_fields = ('name',)
 
 
 class OptionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
-    pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('service',)
+    filterset_fields = ('specialization',)
+    search_fields = ('name',)

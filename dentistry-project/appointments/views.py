@@ -13,6 +13,7 @@ from .serializers import (
 )
 from dentistry.permissions import CurrentDoctorOnly
 from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class AppointmentViewSet(viewsets.ModelViewSet):
@@ -20,6 +21,8 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     serializer_class = AppointmentSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('doctor', 'patient', 'date')
 
     def perform_create(self, serializer):
         user = self.request.user
