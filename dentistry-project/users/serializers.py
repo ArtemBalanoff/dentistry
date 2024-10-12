@@ -27,6 +27,9 @@ class PublicDoctorUserSerializer(BaseUserSerializer):
 class CustomUserCreateSerializer(UserCreateSerializer):
     id = serializers.SerializerMethodField()
 
+    class Meta(UserCreateSerializer.Meta):
+        pass
+
     def create(self, validated_data):
         user = super().create(validated_data)
         PatientProfile.objects.create(user=user)

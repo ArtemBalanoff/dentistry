@@ -1,3 +1,4 @@
+import re
 from typing import Type
 from django.contrib.auth import get_user_model
 
@@ -12,6 +13,7 @@ def get_profile_id_from_user(instance):
 
 
 def format_phone(phone_number):
-    return (
-        f'{phone_number[:2]} ({phone_number[2:5]}) {phone_number[5:8]}-'
-        f'{phone_number[8:10]}-{phone_number[10:12]}')
+    formatted_number = re.sub(r'^(8|\+7)(\d{3})(\d{3})(\d{2})(\d{2})$',
+                              r'\1 (\2) \3-\4-\5', phone_number)
+
+    return formatted_number
