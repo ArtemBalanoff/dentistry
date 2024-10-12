@@ -1,10 +1,24 @@
+from django.forms.models import BaseInlineFormSet
+from django.core.exceptions import ValidationError
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import (DoctorUser, PatientUser,
                      DoctorProfile, PatientProfile, Specialization)
 from services.models import Service
 from .utils import format_phone
-from django.contrib import messages
+
+
+class RequiredInlineModelFormset(BaseInlineFormSet):
+    '''
+    Кастомный Formset с модифицированной валидацией для избежания случаев
+    создания админом пользователя без профиля.
+    '''
+    def clean(self):
+        super().clean()
+        cleaned_data = getattr(self, 'cleaned_data', None)
+        if cleaned_data is not None:
+            if not cleaned_data:
+                raise ValidationError('Профиль пользователя - обязателен.')
 
 
 class ServiceInline(admin.StackedInline):
@@ -15,13 +29,16 @@ class ServiceInline(admin.StackedInline):
 
 
 class DoctorProfileInline(admin.StackedInline):
+    formset = RequiredInlineModelFormset
     model = DoctorProfile
+    extra = 0
     can_delete = False
     verbose_name = 'Профиль Доктора'
     verbose_name_plural = 'профили докторов'
 
 
 class PatientProfileInline(admin.StackedInline):
+    formset = RequiredInlineModelFormset
     model = PatientProfile
     can_delete = False
     verbose_name = 'Профиль Пациента'
@@ -53,16 +70,6 @@ class DoctorAdmin(admin.ModelAdmin):
     @admin.display(description='Номер телефона')
     def get_phone_number(self, obj):
         return format_phone(obj.phone_number)
-
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        obj = form.instance
-        if not hasattr(obj, 'doctor_profile'):
-            obj.delete()
-            self.message_user(
-                request,
-                'Доктор не был создан. Пожалуйста, заполните профиль доктора',
-                level=messages.ERROR)
 
 
 @admin.register(PatientUser)
