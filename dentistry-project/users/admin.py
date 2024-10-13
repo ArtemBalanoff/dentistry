@@ -65,7 +65,6 @@ class StaffAdmin(UserAdmin):
         return super().get_queryset(request).filter(is_staff=True)
 
 
-
 @admin.register(DoctorUser)
 class DoctorAdmin(UserAdmin):
     inlines = (DoctorProfileInline,)
