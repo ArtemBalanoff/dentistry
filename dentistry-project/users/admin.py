@@ -1,8 +1,9 @@
 from django.forms.models import BaseInlineFormSet
 from django.core.exceptions import ValidationError
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from .models import (DoctorUser, PatientUser,
+from .models import (DoctorUser, PatientUser, StaffUser,
                      DoctorProfile, PatientProfile, Specialization)
 from services.models import Service
 from .utils import format_phone
@@ -45,15 +46,39 @@ class PatientProfileInline(admin.StackedInline):
     verbose_name_plural = 'профили пациентов'
 
 
+@admin.register(StaffUser)
+class StaffAdmin(UserAdmin):
+    list_display = ('get_phone_number', 'last_name', 'first_name', 'surname')
+    fields = ('phone_number', 'last_name', 'first_name', 'surname',
+              'password', 'is_staff', 'is_superuser')
+    list_filter = ()
+    add_fieldsets = ((None, {"classes": ("wide",), "fields":
+                             ("phone_number", "password1", "password2"), },),)
+    fieldsets = None
+    ordering = None
+
+    @admin.display(description='Номер телефона')
+    def get_phone_number(self, obj):
+        return format_phone(obj.phone_number)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(is_staff=True)
+
+
+
 @admin.register(DoctorUser)
-class DoctorAdmin(admin.ModelAdmin):
+class DoctorAdmin(UserAdmin):
     inlines = (DoctorProfileInline,)
     list_display = (
         'last_name', 'first_name', 'surname', 'get_doctor_specialization',
         'get_doctor_stage', 'get_phone_number')
+    list_filter = ('doctor_profile__specialization',)
     fields = ('phone_number', 'last_name', 'first_name', 'surname',
               'password', 'birth_day')
-    list_filter = ('doctor_profile__specialization',)
+    add_fieldsets = ((None, {"classes": ("wide",), "fields":
+                             ("phone_number", "password1", "password2"), },),)
+    fieldsets = None
+    ordering = None
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(
@@ -73,12 +98,17 @@ class DoctorAdmin(admin.ModelAdmin):
 
 
 @admin.register(PatientUser)
-class PatientAdmin(admin.ModelAdmin):
+class PatientAdmin(UserAdmin):
     inlines = (PatientProfileInline,)
-    list_display = ('last_name', 'first_name', 'surname', 'get_age',
-                    'get_appointments_count', 'get_phone_number')
+    list_display = ('get_phone_number', 'last_name', 'first_name', 'surname',
+                    'get_age', 'get_appointments_count')
+    list_filter = ()
     fields = ('phone_number', 'last_name', 'first_name', 'surname',
               'password', 'birth_day')
+    add_fieldsets = ((None, {"classes": ("wide",), "fields":
+                             ("phone_number", "password1", "password2"), },),)
+    fieldsets = None
+    ordering = None
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(

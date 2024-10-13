@@ -76,6 +76,17 @@ class PatientUser(CustomUser):
         verbose_name_plural = 'Пациенты'
 
 
+class StaffUser(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = 'админ'
+        verbose_name_plural = 'Админы'
+
+    def save(self, *args, **kwargs):
+        self.is_staff = True
+        super().save(*args, **kwargs)
+
+
 class DoctorProfile(models.Model):
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name='doctor_profile')
