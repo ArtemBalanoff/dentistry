@@ -1,4 +1,5 @@
 from django.db import models
+
 from dentistry.constants import NAME_MAX_LENGTH
 from users.models import Specialization
 

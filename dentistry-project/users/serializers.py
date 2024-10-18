@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from .models import DoctorProfile, PatientProfile, Specialization
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserSerializer, UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework import serializers
+
+from .models import DoctorProfile, PatientProfile, Specialization
 from .utils import get_profile_id_from_user
 
 User = get_user_model()

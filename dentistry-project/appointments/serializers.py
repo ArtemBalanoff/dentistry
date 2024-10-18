@@ -1,24 +1,22 @@
 import datetime as dt
-from typing import Any, Optional as Opt
 from datetime import timedelta
-from rest_framework import serializers
-from .models import Appointment, AppointmentOption, TimeSlot
-from schedule.models import DoctorSchedule
-from users.models import DoctorProfile, PatientProfile
-from services.models import Option, Service
-from .validators import (
-    date_validator,
-    doctor_exc_schedule_freedom_validator,
-    doctor_schedule_freedom_validator,
-    doctor_spec_correspondence_to_services,
-    doctors_validator,
-    options_relate_to_same_services,
-    services_validator,
-    timeslots_correct_duration_validator,
-    timeslots_freedom_validator,
-    timeslots_validator)
-from .utils import check_doctor_working_day, get_timeslots_list
+from typing import Any
+
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from schedule.models import DoctorSchedule
+from services.models import Option, Service
+
+from users.models import DoctorProfile, PatientProfile
+from .models import Appointment, AppointmentOption, TimeSlot
+from .utils import check_doctor_working_day, get_timeslots_list
+from .validators import (date_validator, doctor_exc_schedule_freedom_validator,
+                         doctor_schedule_freedom_validator,
+                         doctor_spec_correspondence_to_services,
+                         doctors_validator, options_relate_to_same_services,
+                         services_validator,
+                         timeslots_correct_duration_validator,
+                         timeslots_freedom_validator, timeslots_validator)
 
 User = get_user_model()
 
@@ -52,9 +50,9 @@ class AvailableTimeSlotsSerializer(serializers.Serializer):
 
     def to_representation(self, instance: Any):
         data: dict = self.validated_data
-        doctor: Opt[DoctorProfile] = data.get('doctor')
-        date: Opt[dt.date] = data.get('date')
-        doctor_schedule: Opt[DoctorSchedule] = (
+        doctor: DoctorProfile = data.get('doctor')
+        date: dt.date | None = data.get('date')
+        doctor_schedule: DoctorSchedule | None = (
             doctor.schedule.get(weekday=date.weekday()))
         timeslots = get_timeslots_list(doctor, date, doctor_schedule)
         return {'timeslots': timeslots}
@@ -85,9 +83,9 @@ class AvailableDaysSerializer(serializers.Serializer):
 
     def to_representation(self, instance: Any):
         data = self.validated_data
-        period: Opt[int] = data.get('period')
-        doctors: Opt[list[DoctorProfile]] = data.get('doctors')
-        services: Opt[list[Service]] = data.get('services')
+        period: int | None = data.get('period')
+        doctors: list[DoctorProfile] | None = data.get('doctors')
+        services: list[Service] | None = data.get('services')
         today = dt.date.today()
         dates = [today + timedelta(days=day_idx) for day_idx in range(period)]
         days_dict = [{'date': date, 'is_free': False, 'doctors': []}
@@ -110,9 +108,6 @@ class AppointmentSerializer(serializers.ModelSerializer):
     services = serializers.PrimaryKeyRelatedField(
         queryset=Service.objects.all(), many=True,
         write_only=True)
-    # doctor = serializers.SlugRelatedField(
-    #     queryset=DoctorProfile.objects.all(), slug_field='user__id'
-    # )
     patient = serializers.PrimaryKeyRelatedField(
         queryset=PatientProfile.objects.all(),
         required=False
@@ -132,10 +127,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         return date_validator(date)
 
     def validate(self, data: dict[str, Any]):
-        timeslots: Opt[list[dt.time]] = data.get('timeslots')
-        date: Opt[dt.date] = data.get('date')
-        doctor: Opt[DoctorProfile] = data.get('doctor')
-        services: Opt[list[Service]] = data.get('services')
+        timeslots: list[dt.time] | None = data.get('timeslots')
+        date: dt.date | None = data.get('date')
+        doctor: DoctorProfile | None = data.get('doctor')
+        services: list[Service] | None = data.get('services')
         timeslots_freedom_validator(doctor, timeslots, date, self.instance)
         timeslots_correct_duration_validator(timeslots, services)
         doctor_schedule_freedom_validator(timeslots, doctor, date)
@@ -145,11 +140,11 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         validated_data.get('services')
-        date: Opt[dt.date] = validated_data.get('date')
-        timeslots: Opt[TimeSlot] = validated_data.get('timeslots')
-        patient: Opt[PatientProfile] = validated_data.get('patient')
-        doctor: Opt[DoctorProfile] = validated_data.get('doctor')
-        services: Opt[list[Service]] = validated_data.get('services')
+        date: dt.date | None = validated_data.get('date')
+        timeslots: TimeSlot | None = validated_data.get('timeslots')
+        patient: PatientProfile | None = validated_data.get('patient')
+        doctor: DoctorProfile | None = validated_data.get('doctor')
+        services: list[Service] | None = validated_data.get('services')
         options = [service.options.first() for service in services]
         appointment: Appointment = Appointment.objects.create(
             patient=patient, doctor=doctor, date=date)
@@ -208,7 +203,7 @@ class AppointmentCloseSerializer(AppointmentSerializer):
         return options
 
     def validate(self, data: dict[str, Any]):
-        options: Opt[list[Service]] = data.get('options')
+        options: list[Service] | None = data.get('options')
         options_relate_to_same_services(self.instance, options)
         return data
 

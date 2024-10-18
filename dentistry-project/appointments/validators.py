@@ -1,13 +1,14 @@
 import datetime as dt
-from typing import Optional as Opt
-from schedule.models import BaseSchedule, DoctorSchedule, ExceptionCase
-from rest_framework.serializers import ValidationError
-from services.models import Service
+
 from appointments.models import Appointment, TimeSlot
-from .utils import (
-    get_necessary_timeslots_count_from_services, time_add_timedelta)
+from rest_framework.serializers import ValidationError
+from schedule.models import BaseSchedule, DoctorSchedule, ExceptionCase
+from services.models import Service
+
 from dentistry.constants import SLOT_DURATION
 from users.models import DoctorProfile
+from .utils import (get_necessary_timeslots_count_from_services,
+                    time_add_timedelta)
 
 
 def date_validator(date: dt.date) -> dt.date:
@@ -77,7 +78,7 @@ def doctors_validator(doctors: list[DoctorProfile]):
 
 def timeslots_freedom_validator(
         doctor: DoctorProfile, timeslots: list[TimeSlot],
-        date: dt.date, instance: Opt[Appointment]) -> None:
+        date: dt.date, instance: Appointment | None) -> None:
     """
     Проверка, не заняты ли временные слоты.
     """

@@ -1,24 +1,28 @@
-from django.urls import path, include
-from users.views import DoctorViewSet, PatientViewSet, SpecializationViewSet
-from services.views import ServiceViewSet, OptionViewSet
-from appointments.views import (
-    avaliable_days, avaliable_timeslots, AppointmentViewSet)
-from rest_framework import routers
-from schedule.views import (
-    BaseScheduleViewSet, DoctorScheduleViewSet, ExceptionCaseViewSet)
+from appointments.views import (AppointmentViewSet, avaliable_days,
+                                avaliable_timeslots)
+from django.urls import include, path
 from djoser.urls import urlpatterns as djoser_urls
 from djoser.urls.jwt import urlpatterns as jwt_urls
+from rest_framework import routers
+from schedule.views import (BaseScheduleViewSet, DoctorScheduleViewSet,
+                            ExceptionCaseViewSet)
+from services.views import OptionViewSet, ServiceViewSet
+
+from users.views import DoctorViewSet, PatientViewSet, SpecializationViewSet
 
 router_v1 = routers.SimpleRouter()
-router_v1.register('doctors', DoctorViewSet)
-router_v1.register('patients', PatientViewSet)
-router_v1.register('specializations', SpecializationViewSet)
-router_v1.register('services', ServiceViewSet)
-router_v1.register('options', OptionViewSet)
-router_v1.register('appointments', AppointmentViewSet)
-router_v1.register('clinic-schedule', BaseScheduleViewSet)
-router_v1.register('doctors-schedule', DoctorScheduleViewSet)
-router_v1.register('exceptions', ExceptionCaseViewSet)
+router_v1.register('doctors', DoctorViewSet, basename='doctor')
+router_v1.register('patients', PatientViewSet, basename='patient')
+router_v1.register('specializations', SpecializationViewSet,
+                   basename='specialization')
+router_v1.register('services', ServiceViewSet, basename='service')
+router_v1.register('options', OptionViewSet, basename='option')
+router_v1.register('appointments', AppointmentViewSet, basename='appointment')
+router_v1.register('clinic-schedule', BaseScheduleViewSet,
+                   basename='clinic-schedule')
+router_v1.register('doctors-schedule', DoctorScheduleViewSet,
+                   basename='doctors-schedule')
+router_v1.register('exceptions', ExceptionCaseViewSet, basename='exception')
 auth_urls = [
     path('auth/', include(djoser_urls)),
     path('auth/', include(jwt_urls)),

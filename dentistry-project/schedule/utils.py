@@ -1,5 +1,6 @@
-from .models import BaseSchedule, DoctorSchedule
 from django.core.exceptions import ValidationError
+
+from .models import BaseSchedule, DoctorSchedule
 
 
 def compare_base_schedule_to_doctors(self: BaseSchedule):

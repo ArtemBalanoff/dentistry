@@ -1,11 +1,12 @@
-from django.forms.models import BaseInlineFormSet
-from django.core.exceptions import ValidationError
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from .models import (DoctorUser, PatientUser, StaffUser,
-                     DoctorProfile, PatientProfile, Specialization)
+from django.core.exceptions import ValidationError
+from django.forms.models import BaseInlineFormSet
 from services.models import Service
+
+from .models import (DoctorProfile, DoctorUser, PatientProfile, PatientUser,
+                     Specialization, StaffUser)
 from .utils import format_phone
 
 

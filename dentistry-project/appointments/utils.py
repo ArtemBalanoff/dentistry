@@ -1,12 +1,14 @@
-from datetime import datetime, time, timedelta
-from dentistry.constants import SLOT_DURATION
-from schedule.models import DoctorSchedule, ExceptionCase
-from .exceptions import DayHaveNecessaryTimeSlotsCount
-from users.models import DoctorProfile
-from services.models import Service
 import datetime as dt
+from datetime import datetime, time, timedelta
+
 from django.db.models import QuerySet
 from rest_framework.serializers import ValidationError
+from schedule.models import DoctorSchedule, ExceptionCase
+from services.models import Service
+
+from dentistry.constants import SLOT_DURATION
+from users.models import DoctorProfile
+from .exceptions import DayHaveNecessaryTimeSlotsCount
 
 
 def get_timeslots_list(doctor: DoctorProfile,

@@ -1,6 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+
 from .models import BaseSchedule, DoctorSchedule, ExceptionCase
-from django.contrib import messages
 
 
 @admin.register(BaseSchedule)

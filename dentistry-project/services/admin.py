@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Service, Option
+
+from .models import Option, Service
 
 
 class OptionInLine(admin.TabularInline):

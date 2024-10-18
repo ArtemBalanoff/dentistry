@@ -1,11 +1,11 @@
-from rest_framework import filters
-from dentistry.permissions import DoctorsOnly
-from rest_framework import viewsets
-from .models import DoctorProfile, PatientProfile, Specialization
-from .serializers import (
-    DoctorSerializer, PatientSerializer, SpecializationSerializer)
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
+from rest_framework.permissions import IsAuthenticated
+
+from dentistry.permissions import DoctorsOnly
+from .models import DoctorProfile, PatientProfile, Specialization
+from .serializers import (DoctorSerializer, PatientSerializer,
+                          SpecializationSerializer)
 
 
 class DoctorViewSet(viewsets.ReadOnlyModelViewSet):

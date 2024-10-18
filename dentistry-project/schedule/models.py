@@ -1,8 +1,9 @@
 from datetime import time
-from django.db import models
-from users.models import DoctorProfile
-from dentistry.constants import REASON_MAX_LENGTH
 
+from django.db import models
+
+from dentistry.constants import REASON_MAX_LENGTH
+from users.models import DoctorProfile
 
 WEEKDAY_CHOICES = (
     (0, 'Понедельник'),
@@ -76,9 +77,9 @@ class DoctorSchedule(models.Model):
         return str(self.doctor)
 
     def clean(self):
-        from .utils import (start_end_time_validator,
+        from .utils import (check_if_clinic_closed,
                             compare_doctors_schedule_to_base,
-                            check_if_clinic_closed)
+                            start_end_time_validator)
         start_end_time_validator(self)
         compare_doctors_schedule_to_base(self)
         if self.is_working:

@@ -1,9 +1,11 @@
 import datetime as dt
-from django.db import models
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from dentistry.constants import NAME_MAX_LENGTH, PHONE_MAX_LENGTH
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from dentistry.constants import NAME_MAX_LENGTH, PHONE_MAX_LENGTH
 from .validators import phone_number_validator
 
 

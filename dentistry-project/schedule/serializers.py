@@ -1,5 +1,6 @@
-from .models import BaseSchedule, DoctorSchedule, ExceptionCase
 from rest_framework import serializers
+
+from .models import BaseSchedule, DoctorSchedule, ExceptionCase
 
 
 class BaseScheduleSerializer(serializers.ModelSerializer):
